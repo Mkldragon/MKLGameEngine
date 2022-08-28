@@ -134,8 +134,8 @@ namespace sge
 
 		MaterialPass*			_pass = nullptr;
 		ShaderStage*			_shaderStage = nullptr;
-		Vector_<ConstBuffer, 4> _constBufs;
-		Vector_<TexParam, 4>	_texParams;
+		Vector<ConstBuffer, 4> _constBufs;
+		Vector<TexParam, 4>	_texParams;
 	};
 
 
@@ -244,7 +244,7 @@ namespace sge
 			}
 		}
 
-		Vector_<UPtr<Pass>, 1> _passes;
+		Vector<UPtr<Pass>, 1> _passes;
 		SPtr<Shader>		_shader;
 		virtual void		onSetShader() {};
 		virtual UPtr<Pass>	onCreatePass(ShaderPass* shaderPass) = 0;

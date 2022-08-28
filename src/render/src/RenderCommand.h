@@ -105,7 +105,7 @@ namespace sge
 		}
 
 	private:
-		Vector_<RenderCommand*, 64>	_commands;
+		Vector<RenderCommand*, 64>	_commands;
 
 		LinearAllocator _allocator;
 	};

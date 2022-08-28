@@ -121,7 +121,7 @@ namespace sge
 			return it->second;
 		}
 
-		Vector_<D3D11_INPUT_ELEMENT_DESC, 32> inputDesc;
+		Vector<D3D11_INPUT_ELEMENT_DESC, 32> inputDesc;
 
 
 

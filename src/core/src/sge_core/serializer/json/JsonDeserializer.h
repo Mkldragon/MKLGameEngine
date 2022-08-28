@@ -135,13 +135,13 @@ namespace sge
 
 	private:
 		Json& _json;
-		Vector_<Json*, 64>	_stack;
+		Vector<Json*, 64>	_stack;
 	};
 
 	template<class T, size_t N>
-	struct JsonIO <JsonDeserializer, Vector_<T, N>> 
+	struct JsonIO <JsonDeserializer, Vector<T, N>> 
 	{
-		static void io(JsonDeserializer& se, Vector_<T, N>& data) 
+		static void io(JsonDeserializer& se, Vector<T, N>& data) 
 		{
 			size_t n = se.beginArray();
 			data.clear(); // ensure elements dtor get called

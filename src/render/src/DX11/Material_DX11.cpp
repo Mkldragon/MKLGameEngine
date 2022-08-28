@@ -78,7 +78,7 @@ namespace sge
 		}
 		else
 		{
-			Vector_<D3D11_INPUT_ELEMENT_DESC, 32> inputDesc;
+			Vector<D3D11_INPUT_ELEMENT_DESC, 32> inputDesc;
 			auto* vsInfo = Info();
 
 

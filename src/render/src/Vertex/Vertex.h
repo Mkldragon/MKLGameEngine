@@ -234,7 +234,7 @@ SGE_ENUM_ALL_OPERATOR(VertexSemantic)
 
 		VertexType type = VertexType::None;
 		size_t	stride = 0;
-		Vector_<Element, 16>	elements;
+		Vector<Element, 16>	elements;
 
 		template<class VERTEX, class ATTR>
 		void addElement(Semantic semantic, ATTR VERTEX::* attr, size_t index = 0) 
@@ -421,8 +421,9 @@ SGE_ENUM_ALL_OPERATOR(VertexSemantic)
 		}
 	};
 
-
+	using Vertex_Pos2f			= VertexT_Pos<Tuple2f>;
 	using Vertex_Pos			= VertexT_Pos<Tuple3f>;
+
 	using Vertex_PosNormal		= VertexT_Normal<Tuple3f, 1, Vertex_Pos>;
 
 	using Vertex_PosColor		= VertexT_Color<Color4b, 1, Vertex_Pos>;

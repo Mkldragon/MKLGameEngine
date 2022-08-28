@@ -220,8 +220,8 @@ namespace sge
 		String path;
 		String fileName;
 		String shaderName;
-		Vector_<Prop, 8> props;
-		Vector_<Pass, 2> passes;
+		Vector<Prop, 8> props;
+		Vector<Pass, 2> passes;
 
 		void clear();
 
@@ -317,7 +317,7 @@ namespace sge
 			int		bindPoint = 0;
 			int		bindCount = 0;
 			size_t	dataSize = 0;
-			Vector_<ShaderVariable, 4> variables;
+			Vector<ShaderVariable, 4> variables;
 
 			const ShaderVariable* findVariable(StrView propname) const
 			{
@@ -340,8 +340,8 @@ namespace sge
 
 		};
 
-		Vector_<ShaderInputParam, 8> inputs;
-		Vector_<ConstBufferInfo, 8> constBuffers;
+		Vector<ShaderInputParam, 8> inputs;
+		Vector<ConstBufferInfo, 8> constBuffers;
 
 		//-------Texture---------
 		class Texture
@@ -360,7 +360,7 @@ namespace sge
 				SGE_NAMED_IO(se, dataType);
 			}
 		};
-		Vector_<Texture, 8>		textures;
+		Vector<Texture, 8>		textures;
 		class Sampler {
 		public:
 			String		name;
@@ -376,7 +376,7 @@ namespace sge
 				SGE_NAMED_IO(se, dataType);
 			}
 		};
-		Vector_<Sampler, 8>		samplers;
+		Vector<Sampler, 8>		samplers;
 
 		//---------Texture---------
 
