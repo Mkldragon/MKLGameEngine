@@ -23,7 +23,7 @@ SGE_ENUM_ALL_OPERATOR(PatchDirection)
 
 		void CreateEditMesh(const Vec3f terrainPos, const Vec2f& terrainSize, int length, int width, int maxLod);
 		void destory();
-		void render(RenderRequest& req);
+		void render(RenderRequest& req, Material* mat);
 
 
 		class Indices
@@ -60,7 +60,7 @@ SGE_ENUM_ALL_OPERATOR(PatchDirection)
 			void create(Terrain* terrain, const Vec2i& index, Shader* shader);
 			int displayLevel() const { return _displayLevel; }
 
-			void render(RenderRequest& req);
+			void render(RenderRequest& req, Material* mat);
 
 			Vec3f worldCenterPos();
 			void setDisplayLevelByViewPos(const Vec3f& viewPos);

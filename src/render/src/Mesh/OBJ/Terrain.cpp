@@ -17,6 +17,9 @@ namespace sge
 		_terrainSize = terrainSize;
 
 		_maxLod = maxLod;
+
+		_patchCount = (_heightMapResolution - 1) / patchCellsPerRow();
+
 		_patchLevels.resize(maxLod);
 
 		for (int lv = 0; lv < _patchLevels.size(); lv++) {
@@ -46,7 +49,7 @@ namespace sge
 			int verticesPerRow = patchVerticesPerRow();
 			int cellsPerRow = patchCellsPerRow();
 
-			_vertexCount = verticesPerRow * cellsPerRow;
+			_vertexCount = verticesPerRow * verticesPerRow;
 			vertexData.resize(_vertexCount);
 
 			auto scale = patchSize();
@@ -88,20 +91,20 @@ namespace sge
 
 	}
 
-	void Terrain::render(RenderRequest& req)
+	void Terrain::render(RenderRequest& req, Material* mat)
 	{
 		for (auto& p : _patches) {
 			p.setDisplayLevelByViewPos(Vec3f{ 0, 0, 0 });
 		}
 
 		for (auto& p : _patches) {
-			p.render(req);
+			p.render(req, mat);
 		}
 
 	}
 
 
-	void Terrain::Patch::render(RenderRequest& req)
+	void Terrain::Patch::render(RenderRequest& req, Material* mat)
 	{
 		auto zoneMask = ZoneMask::None;
 		if (_adjacentPatchHasHigherLod(0, -1)) ZoneMask::North;
@@ -113,7 +116,7 @@ namespace sge
 
 		auto* pi = _terrain->patchIndices(lv, zoneMask);
 		if (!pi) { SGE_ASSERT(false); return; }
-
+		_material = mat;
 		req.setMaterialCommonParams(_material);
 	}
 

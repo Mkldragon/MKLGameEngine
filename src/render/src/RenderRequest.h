@@ -15,7 +15,7 @@ namespace sge
 		Vec3f camera_pos;
 		Vec3f light_pos;
 		Vec3f light_dir;
-		Vec3f light_power;
+		float light_power;
 		Vec3f light_color;
 
 		RenderCommandBuffer commandBuffer;

@@ -85,7 +85,18 @@ public:
 			_renderMesh2.create(editMesh2);
 		}
 
+		{
+			float size = 2048;
+			float pos = size / -2;
+			float y = -100;
+			float height = 200;
+			int maxLod = 6;
+			_testTerrain.CreateEditMesh(Vec3f(pos, y, pos),
+				Vec2f(size, size),
+				1017, 1017,
+				maxLod);
 
+		}
 		//EditMesh _terrainEM;
 
 		//int xSize = 1;
@@ -149,43 +160,27 @@ public:
 		if (!_renderContext) return;
 
 		_camera.setViewport(clientRect());
-		{
 
-			auto model = Mat4f::s_identity();
-			auto view = _camera.viewMatrix();
-			auto proj = _camera.projMatrix();
-			auto mvp = proj * view * model;
+		_renderContext->setFrameBufferSize(clientRect().size);
+		_renderContext->beginRender();
 
-			_material->setParam("sge_matrix_model", model);
-			_material->setParam("sge_matrix_view", view);
-			_material->setParam("sge_matrix_proj", proj);
-			_material->setParam("sge_matrix_mvp", mvp);
+		_renderRequest.reset();
+		_renderRequest.matrix_model = Mat4f::s_identity();
+		_renderRequest.matrix_view	= _camera.viewMatrix();
+		_renderRequest.matrix_proj	= _camera.projMatrix();
+		_renderRequest.camera_pos	= _camera.pos();
 
-			_material->setParam("sge_camera_pos", _camera.pos());
-
-			_material->setParam("sge_light_pos", Vec3f(10, 10, 0));
-			_material->setParam("sge_light_dir", Vec3f(-5, -10, -2));
-			_material->setParam("sge_light_power", 4.0f);
-			_material->setParam("sge_light_color", Vec3f(1, 1, 1));
-		}
-
+		_renderRequest.clearFrameBuffers()->setColor({ 0, 0, 0.2f, 1 });
 
 		auto s = 1.0f;
 		_material->setParam("test_float", s * 0.5f);
 		_material->setParam("test_color", Color4f(s, s, s, 1));
 
-		_renderContext->setFrameBufferSize(clientRect().size);
-		_renderContext->beginRender();
+		_renderRequest.drawMash(SGE_LOC, _renderMesh, _material);
 
-		_cmdBuf.reset();
-		_cmdBuf.clearFrameBuffers()->setColor({ 0.0f , 0, 0.2f, 1 });
-		//_cmdBuf.drawMesh(SGE_LOC, _renderMesh, _material);
-		//_cmdBuf.drawMesh(SGE_LOC, _renderMesh2, _material);
-		_cmdBuf.drawMesh(SGE_LOC, _terrain, _material);
+		_renderRequest.swapBuffers();
 
-		_cmdBuf.swapBuffers();
-
-		_renderContext->commit(_cmdBuf);
+		_renderContext->commit(_renderRequest.commandBuffer);
 
 		_renderContext->endRender();
 		drawNeeded();
@@ -203,6 +198,7 @@ public:
 
 	Math::Camera3f _camera;
 
+	RenderRequest	_renderRequest;
 	//Math	_camera;
 };
 

@@ -5,6 +5,8 @@ namespace sge {
 	//VertexLayoutManager* VertexLayoutManager::s_instance = nullptr;
 
 	VertexLayoutManager::VertexLayoutManager() {
+		registerLayout<Vertex_Pos2f>();
+
 		registerLayout<Vertex_Pos>();
 		registerLayout<Vertex_PosNormal>();
 

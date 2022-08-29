@@ -6,7 +6,7 @@ namespace sge
 	{
 		light_pos = Vec3f(10, 10, 0);
 		light_dir = Vec3f(-5, -10, -2);
-		light_power = Vec3f(4, 4, 4);
+		light_power = 4.0f;
 		light_color = Vec3f(1, 1, 1);
 	}
 	void RenderRequest::reset()
