@@ -55,6 +55,13 @@ namespace sge
 		SGE_INLINE	Span<const u8>	rowBytes(int y) const	{ return Span<const u8>(&_pixelData[y * _info.strideInBytes], _info.size.x * _info.pixelSizeInBytes()); }
 
 		const void* dataPtr() const { return _pixelData.data(); }
+
+		void copyToPixelData(ByteSpan src) { _pixelData.assign(src.begin(), src.end()); }
+
+		void copy(const Image& src) {
+			_info = src._info;
+			_pixelData = src._pixelData;
+		}
 	private:
 		void _create(ColorType colorType, int width, int height, int strideInBytes, int mipmapCount, int dataSizeInBytes);
 		void _checkType(ColorType colorType) const {

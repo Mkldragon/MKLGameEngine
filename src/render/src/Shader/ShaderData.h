@@ -26,6 +26,7 @@ namespace sge
 		Vec3f,
 		Vec4f,
 		Color4f,
+		Texture2D,
 	};
 
 	// RenderStateEnum
@@ -131,7 +132,8 @@ namespace sge
 				E(Vec2f)
 				E(Vec3f)
 				E(Vec4f)
-				E(Color4f);
+				E(Color4f)
+				E(Texture2D);
 #undef E
 		default: return "";
 		}

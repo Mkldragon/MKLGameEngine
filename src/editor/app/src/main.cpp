@@ -29,7 +29,7 @@ public:
 			Texture2D_CreateDesc texDesc;
 			auto& image = texDesc.imageToUpload;
 #if 0
-			image.loadFile("Assets/Textures/uvChecker.png");
+			image.loadFile("Assets/Textures/TerrainTest.png");
 			texDesc.size = image.size();
 			texDesc.colorType = image.colorType();
 #else
@@ -91,10 +91,12 @@ public:
 			float y = -100;
 			float height = 200;
 			int maxLod = 6;
-			_testTerrain.CreateEditMesh(Vec3f(pos, y, pos),
+			_testTerrain.createFromHeightMapFile(
+				Vec3f(pos, y, pos),
 				Vec2f(size, size),
-				1017, 1017,
-				maxLod);
+				height,
+				maxLod,
+				"Assets/Textures/TerrainTest.png");
 
 		}
 		//EditMesh _terrainEM;
@@ -177,6 +179,8 @@ public:
 		_material->setParam("test_color", Color4f(s, s, s, 1));
 
 		_renderRequest.drawMash(SGE_LOC, _renderMesh, _material);
+		_testTerrain.render(_renderRequest, _material);
+
 
 		_renderRequest.swapBuffers();
 

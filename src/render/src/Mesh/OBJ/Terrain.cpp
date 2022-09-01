@@ -3,7 +3,16 @@
 
 namespace sge
 {
-	void Terrain::CreateEditMesh(const Vec3f terrainPos, const Vec2f& terrainSize, int length, int width, int maxLod)
+
+	void Terrain::createFromHeightMapFile(const Vec3f& terrainPos, const Vec2f& terrainSize, float terrainHeight, int maxLod, StrView heightMapFilename) 
+	{
+		Image img;
+		img.loadPngFile(heightMapFilename);
+		int a = 0;
+		CreateEditMesh(terrainPos, terrainSize, terrainHeight, maxLod, img);
+	}
+
+	void Terrain::CreateEditMesh(const Vec3f terrainPos, const Vec2f& terrainSize, float terrainHeight, int maxLod, const Image& heightMap)
 	{
 		destory();
 
@@ -12,9 +21,10 @@ namespace sge
 
 		if (maxLod > 8)
 			throw SGE_ERROR("Reach max lod Limit");
-		_heightMapResolution.set(width, length);
+		_heightMapResolution.set(heightMap.width(), heightMap.height());
 		_terrainPos = terrainPos;
 		_terrainSize = terrainSize;
+		_terrainHeight = terrainHeight;
 
 		_maxLod = maxLod;
 
@@ -28,13 +38,13 @@ namespace sge
 
 		{ // Patches
 			_patches.resize(_patchCount.x * _patchCount.y);
-			auto shader = Renderer::instance()->createShader("Assets/Shaders/Standard.shader");
+			auto shader = Renderer::instance()->createShader("Assets/Shaders/terrain.shader");
 
 			auto* p = _patches.begin();
 			for (int y = 0; y < _patchCount.y; y++) {
 				for (int x = 0; x < _patchCount.x; x++) {
-					Vec2i patchPos{ x, y };
-					p->create(this, patchPos, shader);
+					//Vec2i patchPos{ x, y };
+					p->create(this, Vec2i(x, y), shader);
 					p++;
 				}
 			}
@@ -59,8 +69,8 @@ namespace sge
 			{
 				for (int x = 0; x < verticesPerRow; x++)
 				{
-					Vec2f _pos{ static_cast<float>(x), static_cast<float>(y) };
-					dst->pos = _pos * scale / static_cast<float>(cellsPerRow);
+					//Vec2f _pos{ static_cast<float>(x), static_cast<float>(y) };
+					dst->pos = Vec2f::s_cast(Vec2i(x, y)) * scale / static_cast<float>(cellsPerRow);
 					dst++;
 				}
 			}
@@ -72,6 +82,18 @@ namespace sge
 			desc.bufferSize = _vertexCount * _vertexLayout->stride;
 			_vertexBuffer = renderer->createGpuBuffer(desc);
 			_vertexBuffer->uploadToGpu(spanCast<u8>(vertexData.span()));
+		}
+
+		{
+			Texture2D_CreateDesc desc;
+			desc.size = heightMap.size();
+			desc.colorType = heightMap.colorType();
+			desc.imageToUpload.copy(heightMap);
+			desc.samplerState.filter = TextureFilter::Point;
+			desc.samplerState.wrapU = TextureWrap::Clamp;
+			desc.samplerState.wrapV = TextureWrap::Clamp;
+
+			_heightMapTexture = renderer->createTexture2D(desc);
 		}
 
 	}
@@ -94,7 +116,7 @@ namespace sge
 	void Terrain::render(RenderRequest& req, Material* mat)
 	{
 		for (auto& p : _patches) {
-			p.setDisplayLevelByViewPos(Vec3f{ 0, 0, 0 });
+			p.setDisplayLevelByViewPos(req.camera_pos);
 		}
 
 		for (auto& p : _patches) {
@@ -107,17 +129,51 @@ namespace sge
 	void Terrain::Patch::render(RenderRequest& req, Material* mat)
 	{
 		auto zoneMask = ZoneMask::None;
-		if (_adjacentPatchHasHigherLod(0, -1)) ZoneMask::North;
-		if (_adjacentPatchHasHigherLod(1, 0)) ZoneMask::East;
-		if (_adjacentPatchHasHigherLod(0, 1)) ZoneMask::South;
-		if (_adjacentPatchHasHigherLod(-1, 0)) ZoneMask::West;
+		if (_adjacentPatchHasHigherLod(0, -1)) zoneMask |= ZoneMask::North;
+		if (_adjacentPatchHasHigherLod(1, 0))  zoneMask |= ZoneMask::East;
+		if (_adjacentPatchHasHigherLod(0, 1))  zoneMask |= ZoneMask::South;
+		if (_adjacentPatchHasHigherLod(-1, 0)) zoneMask |= ZoneMask::West;
 
 		auto lv = Math::clamp(_displayLevel, int(0), _terrain->maxLod() - 1);
 
 		auto* pi = _terrain->patchIndices(lv, zoneMask);
 		if (!pi) { SGE_ASSERT(false); return; }
-		_material = mat;
+
+
+		if (!_material) { SGE_ASSERT(false); return; }
+
 		req.setMaterialCommonParams(_material);
+
+		_material->setParam("terrainHeightMap", _terrain->heightMapTexture());
+
+		_material->setParam("terrainPos", _terrain->terrainPos());
+		_material->setParam("terrainSize", _terrain->terrainSize());
+		_material->setParam("terrainHeight", _terrain->terrainHeight());
+
+		_material->setParam("patchCellsPerRow", _terrain->patchCellsPerRow());
+
+		_material->setParam("patchIndex", _index);
+		_material->setParam("patchSize", _terrain->patchSize());
+
+		auto passes = _material->passes();
+
+		for (size_t i = 0; i < passes.size(); i++) {
+			auto* cmd = req.commandBuffer.newCommand<RenderCommand_DrawCall>();
+#if _DEBUG
+			//cmd->debugLoc = SGE_LOC;
+#endif
+
+			cmd->material = _material;
+			cmd->materialPassIndex = i;
+
+			cmd->primitive = RenderPrimitiveType::Triangles;
+			cmd->vertexLayout = _terrain->vertexLayout();
+			cmd->vertexBuffer = _terrain->vertexBuffer();
+			cmd->vertexCount = _terrain->vertexCount();
+			cmd->indexBuffer = pi->indexBuffer();;
+			cmd->indexType = pi->indexType();
+			cmd->indexCount = pi->indexCount();
+		}
 	}
 
 
@@ -146,7 +202,7 @@ namespace sge
 		_Indices.resize(s_patchMeshCount);
 		auto zoneMask = ZoneMask::None;
 		for (auto& it : _Indices) {
-			it.create(terrain, level, zoneMask);
+			it.create(terrain, _level, zoneMask);
 			zoneMask += 1;
 		}
 
@@ -161,8 +217,7 @@ namespace sge
 		int n = rows / 2;
 		int step = 1 << level;
 
-		if (rows == 1)
-		{
+		if (rows == 1) {
 			u16 x0 = 0;
 			u16 x1 = static_cast<u16>(verticesPerRow - 1);
 			u16 y0 = 0;
@@ -177,18 +232,18 @@ namespace sge
 			indexData[3] = x0 + y0;
 			indexData[4] = x0 + y1;
 			indexData[5] = x1 + y1;
-		}
-		else
-		{
-			Vector<Vec2i, 256> sector0;
-			Vector<Vec2i, 256> sector1;
 
-			for (int y = 0; y < n; y++)
-			{
+		}
+
+		else 
+		{
+			Vector<Vec2i, 256> sector0; // lod 0
+			Vector<Vec2i, 256> sector1; // lod 1
+
+			for (int y = 0; y < n; y++) {
 				int lastRow = (y == n - 1) ? 1 : 0;
 
-				for (int x = 0; x <= y; x++)
-				{
+				for (int x = 0; x <= y; x++) {
 					Vec2i v[3];
 					int odd = (x + y) % 2;
 
@@ -197,45 +252,41 @@ namespace sge
 					v[2] = Vec2i(x, y + 1) * step;
 					sector0.appendRange(v);
 
-					if (lastRow)
-					{
+					if (lastRow) {
 						v[2].x = (x - 1 + odd) * step;
 					}
 					sector1.appendRange(v);
 
-					if (x == y) break;
+					if (x == y) break; // drop last triangle in this row
 
 					v[0] = Vec2i(x, y + odd) * step;
 					v[1] = Vec2i(x + 1, y) * step;
 					v[2] = Vec2i(x + 1, y + 1) * step;
 
 					sector0.appendRange(v);
-					if (!lastRow || !odd)
-					{
+
+					if (!lastRow || !odd) { // drop even number triangle in last row
 						sector1.appendRange(v);
 					}
 				}
 			}
 
-			{
+			{ // north
 				auto& sector = enumHas(zoneMask, ZoneMask::North) ? sector1 : sector0;
 				_addToIndices(indexData, sector, verticesPerRow, Vec2i(1, -1), false);
 				_addToIndices(indexData, sector, verticesPerRow, Vec2i(-1, -1), false);
 			}
-
-			{
+			{ // east
 				auto& sector = enumHas(zoneMask, ZoneMask::East) ? sector1 : sector0;
 				_addToIndices(indexData, sector, verticesPerRow, Vec2i(1, 1), true);
 				_addToIndices(indexData, sector, verticesPerRow, Vec2i(-1, 1), true);
 			}
-
-			{
+			{ // south
 				auto& sector = enumHas(zoneMask, ZoneMask::South) ? sector1 : sector0;
 				_addToIndices(indexData, sector, verticesPerRow, Vec2i(1, 1), false);
 				_addToIndices(indexData, sector, verticesPerRow, Vec2i(-1, 1), false);
 			}
-
-			{
+			{ // west
 				auto& sector = enumHas(zoneMask, ZoneMask::West) ? sector1 : sector0;
 				_addToIndices(indexData, sector, verticesPerRow, Vec2i(1, -1), true);
 				_addToIndices(indexData, sector, verticesPerRow, Vec2i(-1, -1), true);
@@ -266,7 +317,8 @@ namespace sge
 		Vec2i center(w / 2, w / 2);
 		int verticesPerPatch = verticesPerRow * verticesPerRow;
 
-		Span<u16> dstSpan;
+
+		Span<u16>	dstSpan;
 		{
 			auto oldSize = vertexIndex.size();
 			auto newSize = oldSize + sector.size();

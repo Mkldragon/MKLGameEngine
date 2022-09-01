@@ -20,8 +20,8 @@ SGE_ENUM_ALL_OPERATOR(PatchDirection)
 	{
 	public:
 		using ZoneMask = PatchDirection;
-
-		void CreateEditMesh(const Vec3f terrainPos, const Vec2f& terrainSize, int length, int width, int maxLod);
+		void createFromHeightMapFile(const Vec3f& terrainPos, const Vec2f& terrainSize, float terrainHeight, int maxLod, StrView heightMapFilename);
+		void CreateEditMesh(const Vec3f terrainPos, const Vec2f& terrainSize, float terrainHeight, int maxLod, const Image& heightMap);
 		void destory();
 		void render(RenderRequest& req, Material* mat);
 
@@ -32,7 +32,7 @@ SGE_ENUM_ALL_OPERATOR(PatchDirection)
 			void create(Terrain* terrain, int level, ZoneMask zoneMask);
 			RenderGpuBuffer* indexBuffer() const { return constCast(_indexBuffer.ptr()); }
 			size_t indexCount() const { return _indexCount; }
-			RenderDataType indexType() const { return RenderDataTypeUtil::get<u8>(); }
+			RenderDataType indexType() const { return RenderDataTypeUtil::get<u16>(); }
 			
 		private:
 			void _addToIndices(Vector<u16>& vertexIndex, Span<Vec2i> sector, int verticesPerRow, Vec2i direction, bool flip);
@@ -49,8 +49,8 @@ SGE_ENUM_ALL_OPERATOR(PatchDirection)
 			void create(Terrain* terrain, int level);
 			Indices* indices(ZoneMask zoneMask) { return &_Indices[enumInt(zoneMask)]; }
 		private:
-			Terrain* _terrain = nullptr;
-			int _level = 0;
+			Terrain*	_terrain = nullptr;
+			int			_level = 0;
 			Vector<Indices, s_patchMeshCount> _Indices;
 		};
 
@@ -118,16 +118,22 @@ SGE_ENUM_ALL_OPERATOR(PatchDirection)
 
 		const	Vec3f& terrainPos() const { return _terrainPos; }
 		const	Vec2f& terrainSize() const { return _terrainSize; }
+		float	terrainHeight() const { return _terrainHeight; }
 
 		Vec2i	patchCount() const { return _patchCount; }
-
-		Vec2f	patchSize() const { return  {_terrainSize.x/_patchCount.x, _terrainSize.y/_patchCount.y }; }
-
-		Vec2f	cellSize() const { return { _terrainSize.x / (_heightMapResolution.x - 1), 
-											_terrainSize.y / (_heightMapResolution.y - 1)}; }
+		Vec2f	patchSize() const { return  _terrainSize / Vec2f::s_cast(_patchCount); }
+		Vec2f	cellSize() const { return _terrainSize / Vec2f::s_cast(_heightMapResolution - 1); }
 
 		Indices* patchIndices(int level, ZoneMask zoneMask);
+		Span<PatchIndices>	patchLevelIndices() { return _patchLevels; }
+
 		Patch* patch(int x, int y);
+
+		const VertexLayout*		vertexLayout() const { return _vertexLayout; }
+		size_t					vertexCount() const { return _vertexCount; }
+
+		RenderGpuBuffer*		vertexBuffer() { return _vertexBuffer; }
+		Texture2D*				heightMapTexture() { return _heightMapTexture; }
 
 	private:
 		//EditMesh		_terrainMesh;
@@ -146,7 +152,8 @@ SGE_ENUM_ALL_OPERATOR(PatchDirection)
 		const VertexLayout* _vertexLayout = nullptr;
 		size_t _vertexCount = 0;
 		SPtr<RenderGpuBuffer> _vertexBuffer;
-		
+
+		SPtr<Texture2D>			_heightMapTexture;
 	};
 
 	SGE_INLINE Terrain::Indices* Terrain::patchIndices(int level, ZoneMask zoneMask) {
@@ -170,8 +177,7 @@ SGE_ENUM_ALL_OPERATOR(PatchDirection)
 
 	SGE_INLINE Vec3f Terrain::Patch::worldCenterPos() {
 		auto s = _terrain->patchSize();
-		Vec2f pos {static_cast<float>(_index.x) , static_cast<float>(_index.y) };
-		pos = (pos + 0.5) * s;
+		auto pos = (Vec2f::s_cast(_index) + 0.5) * s;
 		auto o = _terrain->terrainPos() + Vec3f(pos.x, 0, pos.y);
 		return o;
 	}

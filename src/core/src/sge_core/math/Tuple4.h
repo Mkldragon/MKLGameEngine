@@ -30,6 +30,7 @@ namespace sge {
 		SGE_INLINE bool setAll(const T & v) { set(v, v, v, v); }
 	};
 
+	using Tuple4i = Tuple4<i32>;
 	using Tuple4f = Tuple4<float>;
 	using Tuple4d = Tuple4<double>;
 }

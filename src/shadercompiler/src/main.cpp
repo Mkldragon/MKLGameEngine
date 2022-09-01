@@ -18,9 +18,13 @@ void main()
 	proj->setProjectRoot(path);
 
 	auto dir = loadShader.getCurrentDir();
+	char fileName[100];
+	scanf("%100s", fileName);
+	sge::String filePath = "Assets/Shader/";
+	filePath.append(fileName);
 
-	SGE_LOG("dir : {} ", dir);
-	loadShader.loadShaderFile("Assets/Shader/Standard.shader");
+	SGE_LOG("dir : {} ", filePath);
+	loadShader.loadShaderFile(filePath);
 
 
 	int a;

@@ -15,10 +15,10 @@
 					"op": "Add",
 					"src": "One"
 				},
-				"cull": "Front",
+				"cull": "Back",
 				"depthTest": "LEqual",
 				"depthWrite": "On",
-				"wireFrame": "true"
+				"wireFrame": "false"
 			},
 			"vsEntryPt": "vs_main"
 		}
