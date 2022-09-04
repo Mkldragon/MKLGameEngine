@@ -2,6 +2,12 @@
 #include <sge_editor.h>
 #include "Mesh/OBJ/ObjLoader.h"
 #include "Mesh/OBJ/Terrain.h"
+#include "imgui.h"
+#include "imgui_impl_dx11.h"
+#include "imgui_impl_win32.h"
+
+#include "DX11/Renderer_DX11.h"
+
 
 namespace sge {
 
@@ -56,7 +62,7 @@ public:
 			int a = 0;
 	}
 
-
+		
 
 		auto shader = renderer->createShader("Assets/Shaders/Standard.shader");
 		
@@ -125,6 +131,16 @@ public:
 		//_testTerrain.CreateEditMesh(8, 8);
 		//_terrain.create(*_testTerrain.getTerrainMesh());
 
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		ImGui::StyleColorsDark();
+
+		auto* rd11 = Renderer_DX11::instance();
+
+		ImGui_ImplWin32_Init(_hwnd);
+		ImGui_ImplDX11_Init(rd11->d3dDevice(), rd11->d3dDeviceContext());
+
 	}
 
 	virtual void onCloseButton() override {
@@ -188,6 +204,17 @@ public:
 
 		_renderContext->endRender();
 		drawNeeded();
+
+		ImGui_ImplWin32_NewFrame();
+		ImGui_ImplDX11_NewFrame();
+		ImGui::NewFrame();
+
+		ImGui::Begin("Setting");
+		ImGui::Button("TexT");
+		ImGui::End();
+
+		ImGui::Render();
+
 	}
 
 	SPtr<Material> _material;
@@ -247,6 +274,10 @@ int main() {
 
 	sge::EditorApp app;
 	sge::EditorApp::CreateDesc desc;
+
+
+
+	
 	app.run(desc);
 
 	return 0;

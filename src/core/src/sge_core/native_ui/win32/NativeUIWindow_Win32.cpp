@@ -79,6 +79,9 @@ namespace sge {
 		if (!_hwnd) {
 			throw SGE_ERROR("cannot create native window");
 		}
+		
+		
+
 
 		ShowWindow(_hwnd, SW_SHOW);
 	}
@@ -91,6 +94,9 @@ namespace sge {
 
 	void NativeUIWindow_Win32::onDrawNeeded() {
 		::InvalidateRect(_hwnd, nullptr, false);
+
+
+		SGE_LOG("Render");
 	}
 
 	LRESULT WINAPI NativeUIWindow_Win32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
