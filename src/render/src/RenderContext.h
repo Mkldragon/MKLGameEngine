@@ -2,10 +2,12 @@
 
 #include "sge_core.h"
 #include "RenderCommand.h"
+#include "SgeImGui.h"
 
-#
 namespace sge {
 
+	class RenderCommandBuffer;
+	class RenderRequest;
 
 	struct RenderContext_CreateDesc {
 		NativeUIWindow* window = nullptr;
@@ -18,11 +20,12 @@ namespace sge {
 		using CreateDesc = RenderContext_CreateDesc;
 
 
-		void beginRender() { onBeginRender(); }
-		void endRender() { onEndRender(); }
+		void beginRender();
+		void endRender();
 
 
 		void setFrameBufferSize(Vec2f newSize);
+		const Vec2f& frameBufferSize() const { return _frameBufferSize; }
 
 		void commit(RenderCommandBuffer& cmdBuf) { onCommit(cmdBuf); }
 
@@ -30,6 +33,10 @@ namespace sge {
 		RenderContext(CreateDesc& desc);
 		virtual ~RenderContext() = default;
 		
+		void onPostCreate(CreateDesc& desc);
+		void drawUI();
+		void onUIMouseEvent(UIMouseEvent& event);
+
 
 	protected:
 
@@ -39,6 +46,7 @@ namespace sge {
 		virtual void onCommit(RenderCommandBuffer& cmdBuf) {}
 
 		virtual void onSetFrameBufferSize(Vec2f newSize) {};
+
 
 		Vec2f	_frameBufferSize{ 0,0 };
 
@@ -66,6 +74,7 @@ namespace sge {
 
 		#undef CMD_CASE
 		}
+		ImGui_Sge _imgui;
 	};
 
 

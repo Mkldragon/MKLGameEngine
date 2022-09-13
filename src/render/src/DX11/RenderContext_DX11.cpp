@@ -3,6 +3,7 @@
 #include "RenderGpuBuffer_DX11.h"
 #include "Material_DX11.h"
 
+
 namespace sge
 {
 
@@ -28,18 +29,20 @@ namespace sge
 			swapChainDesc.BufferCount = 1;
 			swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 			swapChainDesc.OutputWindow = win->_hwnd;
-			swapChainDesc.Windowed = TRUE;
+			swapChainDesc.Windowed = true;
 			swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 			swapChainDesc.Flags = 0;
 
 			auto hr = dxgiFactory->CreateSwapChain(dev, &swapChainDesc, _swapChain.ptrForInit());
 			DX11Util::throwIfError(hr);
 		}
+
+		_imgui.create(desc, _renderer);
+
 	}
 
 	void RenderContext_DX11::onCmd_ClearFrameBuffers(RenderCommand_ClearFrameBuffers& cmd)
 	{
-
 		auto* ctx = _renderer->d3dDeviceContext();
 		if (_renderTargetView && cmd.color.has_value()) {
 			float color[] = { 0.0f, 0.2f, 0.4f, 1.0f };
@@ -58,6 +61,8 @@ namespace sge
 
 	void RenderContext_DX11::onCmd_DrawCall(RenderCommand_DrawCall& cmd)
 	{
+		
+		//_imgui.onDrawUI();
 
 		if (!cmd.vertexLayout) { SGE_ASSERT(false); return; }
 		auto* vertexBuffer = static_cast<RenderGpuBuffer_DX11*>(cmd.vertexBuffer.ptr());
@@ -185,6 +190,8 @@ namespace sge
 		viewport.MaxDepth = 1;
 
 		ctx->RSSetViewports(1, &viewport);
+
+
 	}
 
 	void RenderContext_DX11::onEndRender()

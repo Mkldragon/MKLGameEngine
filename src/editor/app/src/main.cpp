@@ -2,11 +2,7 @@
 #include <sge_editor.h>
 #include "Mesh/OBJ/ObjLoader.h"
 #include "Mesh/OBJ/Terrain.h"
-#include "imgui.h"
-#include "imgui_impl_dx11.h"
-#include "imgui_impl_win32.h"
 
-#include "DX11/Renderer_DX11.h"
 
 
 namespace sge {
@@ -27,6 +23,7 @@ public:
 			renderContextDesc.window = this;
 			_renderContext = renderer->createContext(renderContextDesc);
 		}
+
 
 		_camera.setPos(0, 5, 5);
 		_camera.setAim(0, 0, 0);
@@ -69,7 +66,7 @@ public:
 		_material = renderer->createMaterial();
 		_material->setShader(shader);
 
-		//_material->setParam("mainTex", _testTexture);
+		_material->setParam("mainTex", _testTexture);
 
 		{
 			EditMesh editMesh;
@@ -105,6 +102,8 @@ public:
 				"Assets/Textures/TerrainTest.png");
 
 		}
+
+#pragma region useless
 		//EditMesh _terrainEM;
 
 		//int xSize = 1;
@@ -131,15 +130,9 @@ public:
 		//_testTerrain.CreateEditMesh(8, 8);
 		//_terrain.create(*_testTerrain.getTerrainMesh());
 
-		IMGUI_CHECKVERSION();
-		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
-		ImGui::StyleColorsDark();
 
-		auto* rd11 = Renderer_DX11::instance();
+#pragma endregion
 
-		ImGui_ImplWin32_Init(_hwnd);
-		ImGui_ImplDX11_Init(rd11->d3dDevice(), rd11->d3dDeviceContext());
 
 	}
 
@@ -175,12 +168,20 @@ public:
 
 	virtual void onDraw() {
 		Base::onDraw();
+
+
+
+
 		if (!_renderContext) return;
 
 		_camera.setViewport(clientRect());
 
 		_renderContext->setFrameBufferSize(clientRect().size);
 		_renderContext->beginRender();
+
+
+
+		_renderContext->endRender();
 
 		_renderRequest.reset();
 		_renderRequest.matrix_model = Mat4f::s_identity();
@@ -197,29 +198,22 @@ public:
 		_renderRequest.drawMash(SGE_LOC, _renderMesh, _material);
 		_testTerrain.render(_renderRequest, _material);
 
-
 		_renderRequest.swapBuffers();
-
 		_renderContext->commit(_renderRequest.commandBuffer);
 
-		_renderContext->endRender();
+
 		drawNeeded();
 
-		ImGui_ImplWin32_NewFrame();
-		ImGui_ImplDX11_NewFrame();
-		ImGui::NewFrame();
 
-		ImGui::Begin("Setting");
-		ImGui::Button("TexT");
-		ImGui::End();
-
-		ImGui::Render();
 
 	}
 
 	SPtr<Material> _material;
 	SPtr<Texture2D>	_testTexture;
 
+
+	//Renderer_DX11* renderer_dx11;
+	bool show_demo_window = true;
 	SPtr<RenderContext> _renderContext;
 	RenderCommandBuffer _cmdBuf;
 	RenderMesh	_renderMesh;
@@ -259,6 +253,8 @@ public:
 		winDesc.isMainWindow = true;
 		_mainWin.create(winDesc);
 		_mainWin.setWindowTitle("SGE Editor");
+
+
 	}
 
 
