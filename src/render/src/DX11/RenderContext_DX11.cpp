@@ -70,7 +70,6 @@ namespace sge
 	void RenderContext_DX11::onCmd_DrawCall(RenderCommand_DrawCall& cmd)
 	{
 		
-
 		_imgui.onDrawUI();
 
 		if (!cmd.vertexLayout) { SGE_ASSERT(false); return; }
@@ -183,7 +182,6 @@ namespace sge
 
 	void RenderContext_DX11::onBeginRender()
 	{
-
 
 		ID3D11DeviceContext4* ctx = _renderer->d3dDeviceContext();
 

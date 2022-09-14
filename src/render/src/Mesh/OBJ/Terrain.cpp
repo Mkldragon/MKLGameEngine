@@ -8,7 +8,6 @@ namespace sge
 	{
 		Image img;
 		img.loadPngFile(heightMapFilename);
-		int a = 0;
 		CreateEditMesh(terrainPos, terrainSize, terrainHeight, maxLod, img);
 	}
 
@@ -113,32 +112,31 @@ namespace sge
 
 	}
 
-	void Terrain::render(RenderRequest& req, Material* mat)
+	void Terrain::render(RenderRequest& req)
 	{
 		for (auto& p : _patches) {
 			p.setDisplayLevelByViewPos(req.camera_pos);
 		}
 
 		for (auto& p : _patches) {
-			p.render(req, mat);
+			p.render(req);
 		}
 
 	}
 
 
-	void Terrain::Patch::render(RenderRequest& req, Material* mat)
+	void Terrain::Patch::render(RenderRequest& req)
 	{
 		auto zoneMask = ZoneMask::None;
 		if (_adjacentPatchHasHigherLod(0, -1)) zoneMask |= ZoneMask::North;
-		if (_adjacentPatchHasHigherLod(1, 0))  zoneMask |= ZoneMask::East;
-		if (_adjacentPatchHasHigherLod(0, 1))  zoneMask |= ZoneMask::South;
+		if (_adjacentPatchHasHigherLod(1, 0)) zoneMask |= ZoneMask::East;
+		if (_adjacentPatchHasHigherLod(0, 1)) zoneMask |= ZoneMask::South;
 		if (_adjacentPatchHasHigherLod(-1, 0)) zoneMask |= ZoneMask::West;
 
 		auto lv = Math::clamp(_displayLevel, int(0), _terrain->maxLod() - 1);
 
 		auto* pi = _terrain->patchIndices(lv, zoneMask);
 		if (!pi) { SGE_ASSERT(false); return; }
-
 
 		if (!_material) { SGE_ASSERT(false); return; }
 
@@ -157,6 +155,8 @@ namespace sge
 
 		auto passes = _material->passes();
 
+
+
 		for (size_t i = 0; i < passes.size(); i++) {
 			auto* cmd = req.commandBuffer.newCommand<RenderCommand_DrawCall>();
 #if _DEBUG
@@ -170,7 +170,7 @@ namespace sge
 			cmd->vertexLayout = _terrain->vertexLayout();
 			cmd->vertexBuffer = _terrain->vertexBuffer();
 			cmd->vertexCount = _terrain->vertexCount();
-			cmd->indexBuffer = pi->indexBuffer();;
+			cmd->indexBuffer = pi->indexBuffer();
 			cmd->indexType = pi->indexType();
 			cmd->indexCount = pi->indexCount();
 		}

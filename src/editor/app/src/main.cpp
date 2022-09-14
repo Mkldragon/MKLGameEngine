@@ -169,9 +169,6 @@ public:
 	virtual void onDraw() {
 		Base::onDraw();
 
-
-
-
 		if (!_renderContext) return;
 
 		_camera.setViewport(clientRect());
@@ -196,11 +193,11 @@ public:
 		_material->setParam("test_color", Color4f(s, s, s, 1));
 
 		_renderRequest.drawMash(SGE_LOC, _renderMesh, _material);
-		_testTerrain.render(_renderRequest, _material);
+		//_testTerrain.render(_renderRequest);
 
 		_renderRequest.swapBuffers();
 		_renderContext->commit(_renderRequest.commandBuffer);
-
+		_renderContext->endRender();
 
 		drawNeeded();
 

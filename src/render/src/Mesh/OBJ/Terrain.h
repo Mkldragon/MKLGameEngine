@@ -23,7 +23,7 @@ SGE_ENUM_ALL_OPERATOR(PatchDirection)
 		void createFromHeightMapFile(const Vec3f& terrainPos, const Vec2f& terrainSize, float terrainHeight, int maxLod, StrView heightMapFilename);
 		void CreateEditMesh(const Vec3f terrainPos, const Vec2f& terrainSize, float terrainHeight, int maxLod, const Image& heightMap);
 		void destory();
-		void render(RenderRequest& req, Material* mat);
+		void render(RenderRequest& req);
 
 
 		class Indices
@@ -60,7 +60,7 @@ SGE_ENUM_ALL_OPERATOR(PatchDirection)
 			void create(Terrain* terrain, const Vec2i& index, Shader* shader);
 			int displayLevel() const { return _displayLevel; }
 
-			void render(RenderRequest& req, Material* mat);
+			void render(RenderRequest& req);
 
 			Vec3f worldCenterPos();
 			void setDisplayLevelByViewPos(const Vec3f& viewPos);
@@ -136,9 +136,7 @@ SGE_ENUM_ALL_OPERATOR(PatchDirection)
 		Texture2D*				heightMapTexture() { return _heightMapTexture; }
 
 	private:
-		//EditMesh		_terrainMesh;
-		//Vec3f			_cameraPos{ 0,0,0 };
-		//Vector<Vec3f>	_vertex;
+
 		Vec3f _terrainPos{ 0,0,0 };
 		Vec2f _terrainSize{ 0,0 };
 		float _terrainHeight = 0;
@@ -146,12 +144,12 @@ SGE_ENUM_ALL_OPERATOR(PatchDirection)
 		int _maxLod = 1;
 		Vec2i _patchCount{ 0,0 };
 
-		Vector<Patch>	_patches;
-		Vector<PatchIndices> _patchLevels;
+		Vector<Patch>			_patches;
+		Vector<PatchIndices>	_patchLevels;
 
-		const VertexLayout* _vertexLayout = nullptr;
-		size_t _vertexCount = 0;
-		SPtr<RenderGpuBuffer> _vertexBuffer;
+		const VertexLayout*		_vertexLayout = nullptr;
+		size_t					_vertexCount = 0;
+		SPtr<RenderGpuBuffer>	_vertexBuffer;
 
 		SPtr<Texture2D>			_heightMapTexture;
 	};

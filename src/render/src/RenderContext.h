@@ -65,7 +65,7 @@ namespace sge {
 			for (auto* cmd : cmdBuf.commands()) {
 				switch (cmd->type()) {
 					CMD_CASE(ClearFrameBuffers)
-						CMD_CASE(SwapBuffers);
+					CMD_CASE(SwapBuffers);
 					CMD_CASE(DrawCall);
 				default:
 					throw SGE_ERROR("unhandled command");
