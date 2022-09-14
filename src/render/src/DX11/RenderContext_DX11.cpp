@@ -3,7 +3,6 @@
 #include "RenderGpuBuffer_DX11.h"
 #include "Material_DX11.h"
 
-
 namespace sge
 {
 
@@ -39,6 +38,15 @@ namespace sge
 
 		_imgui.create(desc, _renderer);
 
+		//if (!IMGUI_CHECKVERSION())
+		//	throw SGE_ERROR("ImGui version error");
+		//ImGui::CreateContext();
+
+		//ImGuiIO& io = ImGui::GetIO();
+
+		//ImGui_ImplWin32_Init(desc.window->_hwnd);
+		//ImGui_ImplDX11_Init(_renderer->d3dDevice(), _renderer->d3dDeviceContext());
+
 	}
 
 	void RenderContext_DX11::onCmd_ClearFrameBuffers(RenderCommand_ClearFrameBuffers& cmd)
@@ -62,7 +70,8 @@ namespace sge
 	void RenderContext_DX11::onCmd_DrawCall(RenderCommand_DrawCall& cmd)
 	{
 		
-		//_imgui.onDrawUI();
+
+		_imgui.onDrawUI();
 
 		if (!cmd.vertexLayout) { SGE_ASSERT(false); return; }
 		auto* vertexBuffer = static_cast<RenderGpuBuffer_DX11*>(cmd.vertexBuffer.ptr());
@@ -105,7 +114,8 @@ namespace sge
 
 		ID3D11Buffer* ppVertexBuffers[] = { vertexBuffer->d3dBuf() };
 		ctx->IASetVertexBuffers(0, 1, ppVertexBuffers, &stride, &offset);
-		
+
+
 
 		if (indexCount > 0) {
 			auto indexType = DX11Util::getDxFormat(cmd.indexType);
@@ -115,6 +125,8 @@ namespace sge
 		else {
 			ctx->Draw(vertexCount, 0);
 		}
+
+
 	}
 
 	ID3D11InputLayout* RenderContext_DX11::_getTestInputLayout(const VertexLayout* src)
@@ -171,6 +183,7 @@ namespace sge
 
 	void RenderContext_DX11::onBeginRender()
 	{
+
 
 		ID3D11DeviceContext4* ctx = _renderer->d3dDeviceContext();
 

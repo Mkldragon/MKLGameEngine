@@ -2,6 +2,7 @@
 #include "RenderContext.h"
 #include "RenderRequest.h"
 #include "Renderer.h"
+
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
 
@@ -14,7 +15,18 @@ namespace sge
 	}
 	void ImGui_Sge::create(CreateDesc& desc, Renderer_DX11* renderer)
 	{
-		if(!IMGUI_CHECKVERSION())
+
+		if (!IMGUI_CHECKVERSION())
+			throw SGE_ERROR("ImGui version error");
+		ImGui::CreateContext();
+
+		ImGuiIO& io = ImGui::GetIO();
+
+		ImGui_ImplWin32_Init(desc.window->_hwnd);
+		ImGui_ImplDX11_Init(renderer->d3dDevice(), renderer->d3dDeviceContext());
+
+
+		/*if(!IMGUI_CHECKVERSION())
 			throw SGE_ERROR("ImGui version error");
 		_ctx = ImGui::CreateContext();
 		if(!_ctx)
@@ -27,7 +39,7 @@ namespace sge
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
 		ImGui_ImplWin32_Init(desc.window->_hwnd);
-		ImGui_ImplDX11_Init(renderer->d3dDevice(), renderer->d3dDeviceContext());
+		ImGui_ImplDX11_Init(renderer->d3dDevice(), renderer->d3dDeviceContext());*/
 	}
 	void ImGui_Sge::destory()
 	{
@@ -49,14 +61,21 @@ namespace sge
 	}
 	void ImGui_Sge::onEndRender(RenderContext* renderCtx)
 	{
+
 	}
 	void ImGui_Sge::onDrawUI()
 	{
 
-		//ImGui::NewFrame();
-		//ImGui::ShowDemoWindow(nullptr);
+		ImGui_ImplDX11_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
 
-		//ImGui::Render();
+		ImGui::Begin("Hello, world!");
+		ImGui::Text("This is some useful text.");
+		ImGui::End();
+
+		ImGui::Render();
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	}
 	void ImGui_Sge::onUIMouseEvent(UIMouseEvent& event)
