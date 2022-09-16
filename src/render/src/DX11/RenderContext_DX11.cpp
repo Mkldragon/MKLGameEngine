@@ -70,7 +70,7 @@ namespace sge
 	void RenderContext_DX11::onCmd_DrawCall(RenderCommand_DrawCall& cmd)
 	{
 		
-		_imgui.onDrawUI();
+		
 
 		if (!cmd.vertexLayout) { SGE_ASSERT(false); return; }
 		auto* vertexBuffer = static_cast<RenderGpuBuffer_DX11*>(cmd.vertexBuffer.ptr());
@@ -124,7 +124,7 @@ namespace sge
 		else {
 			ctx->Draw(vertexCount, 0);
 		}
-
+		_imgui.onDrawUI();
 
 	}
 

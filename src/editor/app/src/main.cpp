@@ -142,6 +142,11 @@ public:
 	}
 
 	virtual void onUIMouseEvent(UIMouseEvent& ev) override {
+
+		_renderContext->onUIMouseEvent(ev);
+
+		if (ev.isCaptureImGui) return;
+
 		if (ev.isDragging()) {
 			using Button = UIMouseEventButton;
 			switch (ev.pressedButtons) {
@@ -175,8 +180,7 @@ public:
 
 		_renderContext->setFrameBufferSize(clientRect().size);
 		_renderContext->beginRender();
-
-
+		_renderContext->AssingMaterialToImGui(_material);
 
 		_renderContext->endRender();
 
@@ -188,21 +192,18 @@ public:
 
 		_renderRequest.clearFrameBuffers()->setColor({ 0, 0, 0.2f, 1 });
 
-		auto s = 1.0f;
-		_material->setParam("test_float", s * 0.5f);
-		_material->setParam("test_color", Color4f(s, s, s, 1));
+		auto s = 0.0f;
+		//_material->setParam("test_float", s * 0.5f);
+		//_material->setParam("test_color", Color4f(s, s, s, 1));
 
 		_renderRequest.drawMash(SGE_LOC, _renderMesh, _material);
-		//_testTerrain.render(_renderRequest);
+
 
 		_renderRequest.swapBuffers();
 		_renderContext->commit(_renderRequest.commandBuffer);
 		_renderContext->endRender();
 
 		drawNeeded();
-
-
-
 	}
 
 	SPtr<Material> _material;

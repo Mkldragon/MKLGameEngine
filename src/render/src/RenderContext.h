@@ -36,7 +36,7 @@ namespace sge {
 		void onPostCreate(CreateDesc& desc);
 		void drawUI();
 		void onUIMouseEvent(UIMouseEvent& event);
-
+		void AssingMaterialToImGui(Material* mat);
 
 	protected:
 
@@ -44,7 +44,6 @@ namespace sge {
 		virtual void onEndRender() {};
 
 		virtual void onCommit(RenderCommandBuffer& cmdBuf) {}
-
 		virtual void onSetFrameBufferSize(Vec2f newSize) {};
 
 

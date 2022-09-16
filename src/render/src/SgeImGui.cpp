@@ -16,30 +16,26 @@ namespace sge
 	void ImGui_Sge::create(CreateDesc& desc, Renderer_DX11* renderer)
 	{
 
-		if (!IMGUI_CHECKVERSION())
+		//if (!IMGUI_CHECKVERSION())
+		//	throw SGE_ERROR("ImGui version error");
+		//ImGui::CreateContext();
+
+		//ImGuiIO& io = ImGui::GetIO();
+
+		//ImGui_ImplWin32_Init(desc.window->_hwnd);
+		//ImGui_ImplDX11_Init(renderer->d3dDevice(), renderer->d3dDeviceContext());
+
+
+		if(!IMGUI_CHECKVERSION())
 			throw SGE_ERROR("ImGui version error");
 		ImGui::CreateContext();
 
 		ImGuiIO& io = ImGui::GetIO();
-
-		ImGui_ImplWin32_Init(desc.window->_hwnd);
-		ImGui_ImplDX11_Init(renderer->d3dDevice(), renderer->d3dDeviceContext());
-
-
-		/*if(!IMGUI_CHECKVERSION())
-			throw SGE_ERROR("ImGui version error");
-		_ctx = ImGui::CreateContext();
-		if(!_ctx)
-			throw SGE_ERROR("ImGui error create context");
-
-		ImGuiIO& io = ImGui::GetIO();
-		io.BackendRendererUserData = this;
-		io.BackendRendererName = "ImGui_SGE";
 		io.BackendFlags |= ImGuiBackendFlags_RendererHasVtxOffset;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
 		ImGui_ImplWin32_Init(desc.window->_hwnd);
-		ImGui_ImplDX11_Init(renderer->d3dDevice(), renderer->d3dDeviceContext());*/
+		ImGui_ImplDX11_Init(renderer->d3dDevice(), renderer->d3dDeviceContext());
 	}
 	void ImGui_Sge::destory()
 	{
@@ -70,37 +66,56 @@ namespace sge
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 
-		ImGui::Begin("Hello, world!");
-		ImGui::Text("This is some useful text.");
+		ImGui::Begin("Model Color Editor");
+		ImGui::SliderFloat("Size", &size, 0, 2);
+		ImGui::ColorEdit4("Color", matColor.data);
 		ImGui::End();
 
 		ImGui::Render();
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
+		if (_material != nullptr)
+		{
+			_material->setParam("test_color", matColor);
+		}
 	}
 	void ImGui_Sge::onUIMouseEvent(UIMouseEvent& event)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-
 		using Type = UIMouseEventType;
-		switch (event.type) {
-		case Type::Move: {
-			io.AddMousePosEvent(event.pos.x, event.pos.y);
-		} break;
 
-		//case Type::Down: {
-		//	io.AddMouseButtonEvent(_mouseButton(event.pressedButtons), true);
-		//} break;
+		switch (event.type) 
+		{
+			case Type::Move: {
+				io.AddMousePosEvent(event.pos.x, event.pos.y);
+			} break;
 
-		//case Type::Up: {
-		//	io.AddMouseButtonEvent(_mouseButton(event.pressedButtons), false);
-		//} break;
+			case Type::Down: {
+				io.AddMouseButtonEvent(_mouseButton(event.pressedButtons), true);
+			} break;
 
-		case Type::Scroll: {
-			io.AddMouseWheelEvent(event.scroll.x, event.scroll.y);
-		} break;
+			case Type::Up: {
+				io.AddMouseButtonEvent(_mouseButton(event.pressedButtons), false);
+			} break;
+
+			case Type::Scroll: {
+				io.AddMouseWheelEvent(event.scroll.x, event.scroll.y);
+			} break;
 		}
+
+
+		event.isCaptureImGui = io.WantCaptureMouse;
+
 	}
+
+	void ImGui_Sge::SetMaterial(Material* mat)
+	{
+		if (_material == mat) return;
+
+		_material = mat;
+	}
+
+
 	int ImGui_Sge::_mouseButton(UIMouseEventButton& event)
 	{
 		using Button = UIMouseEventButton;

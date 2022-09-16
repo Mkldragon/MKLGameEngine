@@ -26,13 +26,16 @@ namespace sge
 
 		void onDrawUI();
 		void onUIMouseEvent(UIMouseEvent& event);
+		void SetMaterial(Material* mat);
 
 	private:
+		Color4f matColor {1,1,1,1};
+		float size = 0;
 		//void _createFontTexture();
 		int _mouseButton(UIMouseEventButton& event);
 
 		SPtr<Shader>	_shader;
-		SPtr<Material>	_material;
+		SPtr<Material>	_material = nullptr;
 		SPtr<Texture2D>	_fontTex;
 
 		const VertexLayout* _vertexLayout = nullptr;

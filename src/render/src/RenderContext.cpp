@@ -33,12 +33,19 @@ namespace sge
 
 	void RenderContext::drawUI()
 	{
-		//_imgui.onDrawUI();
+		_imgui.onDrawUI();
 	}
 
 	void RenderContext::onUIMouseEvent(UIMouseEvent& event)
 	{
-		//_imgui.onUIMouseEvent(event);
+		_imgui.onUIMouseEvent(event);
 	}
+
+	void RenderContext::AssingMaterialToImGui(Material* mat)
+	{
+		_imgui.SetMaterial(mat);
+	}
+
+	
 
 }

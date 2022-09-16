@@ -38,7 +38,8 @@ namespace sge
 	SGE_ENUM_ALL_OPERATOR(UIEventModifier)
 
 
-	struct UIMouseEvent {
+	struct UIMouseEvent 
+	{
 		using Type = UIMouseEventType;
 		using Modifier = UIEventModifier;
 		using Button = UIMouseEventButton;
@@ -49,6 +50,8 @@ namespace sge
 		bool isScroll() const { return type == Type::Scroll; }
 
 		bool isDragging() const { return type == Type::Move && pressedButtons != Button::None; }
+		bool isCaptureImGui = false;
+
 
 		Type		type = Type::None;
 		Modifier	modifier = Modifier::None;
