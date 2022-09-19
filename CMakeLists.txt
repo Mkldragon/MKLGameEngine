@@ -78,4 +78,7 @@ add_subdirectory(src/editor/app)
 #-- shaderCompiler
 add_subdirectory(src/shadercompiler)
 
+#-- shaderCompiler
+add_subdirectory(src/test)
+
 set_property (DIRECTORY PROPERTY VS_STARTUP_PROJECT sge_editor_app)
