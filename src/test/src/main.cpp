@@ -9,14 +9,19 @@
 
 void TestReflection(Shape& s)
 {
+	std::cout << "-------------------------------------\n";
+
 	auto* t = myTypeOf(s);
 	if (!t)
 	{
 		std::cout << "unknown Type\n";
+		return;
 	}
-	else
+
+	std::cout << t->name << "\n";
+	for (auto& f : t->fields())
 	{
-		std::cout << t->name << "\n";
+		std::cout << f.name << " Type=" << f.fieldType->name << " offset:" << f.offset << "\n";
 	}
 
 	Circle* c = my_cast<Circle>(&s);

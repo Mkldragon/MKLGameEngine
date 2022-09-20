@@ -9,7 +9,16 @@ template<> const TypeInfo* myTypeOf<Shape>()
 		{
 			name = "Shape";
 			baseClass = myTypeOf<Object>();
+		
+
+			static FieldInfo fi[] = {
+				FieldInfo("x", &Shape::x),
+				FieldInfo("y", &Shape::y)
+			};
+			setField(fi);
 		}
+
+
 	};
 
 	static T1 t1;
@@ -25,10 +34,19 @@ template<> const TypeInfo* myTypeOf<Circle>()
 		{
 			name = "Circle";
 			baseClass = myTypeOf<Shape>();
+
+
+			static FieldInfo fi[] = {
+				FieldInfo("radius", &Circle::radius)
+			};
+
+			setField(fi);
 		}
+
 	};
 
 	static T1 t1;
 	return &t1;
 }
+
 
