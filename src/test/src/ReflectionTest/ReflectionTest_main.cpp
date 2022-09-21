@@ -1,33 +1,33 @@
 #include "ReflectionTest_main.h"
 
 
-template<> const TypeInfo* myTypeOf<float>()
-{
-	class T1 : public TypeInfo
-	{
-	public:
-		T1()
-		{
-			name = "float";
-		}
-	};
+#define myTypeOf_impl(T)						\
+	template<> const TypeInfo* myTypeOf<T>()	\
+	{											\
+		static TypeInfoInitNoBase<T> ti(#T);	\
+		return &ti;								\
+	}											\
+//-----
 
-	static T1 t1;
-	return &t1;
-}
+myTypeOf_impl(float)
+myTypeOf_impl(double)
 
-template<> const TypeInfo* myTypeOf<Object>()
-{
-	class T1 : public TypeInfo
-	{
-	public:
-		T1()
-		{
-			name = "Object";
-		}
-	};
+myTypeOf_impl(int8_t)
+myTypeOf_impl(int16_t)
+myTypeOf_impl(int32_t)
+myTypeOf_impl(int64_t)
 
-	static T1 t1;
-	return &t1;
-}
+myTypeOf_impl(uint8_t)
+myTypeOf_impl(uint16_t)
+myTypeOf_impl(uint32_t)
+myTypeOf_impl(uint64_t)
+
+myTypeOf_impl(char16_t)
+myTypeOf_impl(char32_t)
+myTypeOf_impl(wchar_t)
+
+
+myTypeOf_impl(Object)
+
+
 

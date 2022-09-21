@@ -35,7 +35,7 @@ void main()
 	circle.radius = 19;
 	TestReflection(circle);
 
-	Rect rect;
-	TestReflection(rect);
+	Shape shape;
+	TestReflection(shape);
 	
 }

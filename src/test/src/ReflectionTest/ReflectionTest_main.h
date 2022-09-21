@@ -1,6 +1,22 @@
 #pragma once
 #include "sge_core.h"
 
+#define MY_TYPE(T, BASE)						\
+private:										\
+	using This = T;								\
+	using Base = BASE;							\
+	class TI_Base : public TypeInfoInit<T, BASE> {	\
+	public:										\
+		TI_Base() : TypeInfoInit<T, BASE>(#T) {		\
+		}										\
+	};											\
+public: \
+	static const TypeInfo* s_getType(); \
+	virtual const TypeInfo* getType() const override { return s_getType(); } \
+private:										\
+	
+//--------------
+
 
 class TypeInfo;
 template<class T> const TypeInfo* myTypeOf();
@@ -90,7 +106,7 @@ public:
 
 	const FieldInfo* fieldsArray = nullptr;
 	size_t fieldCount = 0;
-
+	size_t dataSize = 0;
 	//sge::Vector<>
 	FieldsEnumerator fields() const
 	{
@@ -115,12 +131,7 @@ public:
 		return isKindOf(myTypeOf<R>());
 	}
 
-	template<size_t N>
-	void setField(const FieldInfo (&fi)[N])
-	{
-		fieldsArray = fi;
-		fieldCount = N;
-	}
+
 };
 
 template<class T> const TypeInfo* myTypeOf();
@@ -183,5 +194,67 @@ inline const FieldInfo& FieldsEnumerator::Iterator::operator*()
 	return typeInfo->fieldsArray[fieldIndex];
 }
 
+
+
+
+template<class T>
+class TypeInfoInitNoBase : public TypeInfo
+{
+public:
+	TypeInfoInitNoBase(const char* name_)
+	{
+		name = name_;
+		dataSize = sizeof(T);
+	}
+
+	template<size_t N>
+	void setField(const FieldInfo(&fi)[N])
+	{
+		fieldsArray = fi;
+		fieldCount = N;
+	}
+};
+
+
+template<class T, class Base>
+class TypeInfoInit : public TypeInfoInitNoBase<T>
+{
+public:
+	TypeInfoInit(const char* name_) :
+		TypeInfoInitNoBase<T>(name_)
+	{
+		//static_assert(std::is_base_of<Base, T>()::value, "invaild base class");
+		this->baseClass = myTypeOf<Base>();
+
+	}
+};
+
+
+
+
+#define myTypeOf_define(T)						\
+	template<> const TypeInfo* myTypeOf<T>();	\
+//----------
+
+myTypeOf_define(float)
+myTypeOf_define(double)
+
+myTypeOf_define(int8_t)
+myTypeOf_define(int16_t)
+myTypeOf_define(int32_t)
+myTypeOf_define(int64_t)
+myTypeOf_define(uint8_t)
+myTypeOf_define(uint16_t)
+myTypeOf_define(uint32_t)
+myTypeOf_define(uint64_t)
+
+myTypeOf_define(char16_t)
+myTypeOf_define(char32_t)
+myTypeOf_define(wchar_t)
+
+template<class T> inline
+const TypeInfo* myTypeOf() {
+	return T::s_getType();
+}
 
 

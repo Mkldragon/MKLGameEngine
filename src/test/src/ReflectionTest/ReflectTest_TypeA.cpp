@@ -1,50 +1,38 @@
 #include "ReflectTest_TypeA.h"
 
-template<> const TypeInfo* myTypeOf<Shape>()
-{
-	class T1 : public TypeInfo
+const TypeInfo* Shape::s_getType()
+{						
+	class TI : public TI_Base
 	{
-	public:
-		T1()
-		{
-			name = "Shape";
-			baseClass = myTypeOf<Object>();
-		
-
-			static FieldInfo fi[] = {
-				FieldInfo("x", &Shape::x),
-				FieldInfo("y", &Shape::y)
-			};
-			setField(fi);
-		}
-
-
+		public:
+			TI()
+			{
+				static FieldInfo fi[] = 
+				{
+					FieldInfo("x", &This::x),
+					FieldInfo("y", &This::y)
+				};
+				setField(fi);
+			}
 	};
 
-	static T1 t1;
-	return &t1;
+	static TI ti;
+	return &ti;
 }
 
-template<> const TypeInfo* myTypeOf<Circle>()
+const TypeInfo* Circle::s_getType()
 {
-	class T1 : public TypeInfo
+	class T1 : public TI_Base
 	{
 	public:
 		T1()
 		{
-			name = "Circle";
-			baseClass = myTypeOf<Shape>();
-
-
 			static FieldInfo fi[] = {
-				FieldInfo("radius", &Circle::radius)
+				FieldInfo("radius", &This::radius)
 			};
-
 			setField(fi);
 		}
-
 	};
-
 	static T1 t1;
 	return &t1;
 }
