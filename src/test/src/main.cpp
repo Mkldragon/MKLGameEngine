@@ -31,11 +31,21 @@ void TestReflection(Shape& s)
 
 void main()
 {
+	auto* mgr = TypeManager::instance();
+	mgr->registerType("Rect", myTypeOf<Rect>());
+	auto* ti = TypeManager::instance()->find("Rect");
+	Object* obj = ti->createObject();
+
 	Circle circle;
 	circle.radius = 19;
 	TestReflection(circle);
 
 	Shape shape;
 	TestReflection(shape);
+
+	Rect* m_rect = my_cast<Rect>(obj);
+	m_rect->width = 5;
+	m_rect->height = 10;
+	TestReflection(*m_rect);
 	
 }

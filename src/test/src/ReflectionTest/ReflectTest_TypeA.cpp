@@ -37,4 +37,23 @@ const TypeInfo* Circle::s_getType()
 	return &t1;
 }
 
+const TypeInfo* Rect::s_getType()
+{
+	class TI : public TI_Base
+	{
+	public:
+		TI()
+		{
+			static FieldInfo fi[] = {
+				FieldInfo("width", &This::width),
+				FieldInfo("height", &This::height)
+			};
+			setField(fi);
+		}
+
+	};
+	static TI ti;
+	return &ti;
+}
+
 

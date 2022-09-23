@@ -17,9 +17,29 @@ private:										\
 	
 //--------------
 
-
+class Object;
 class TypeInfo;
 template<class T> const TypeInfo* myTypeOf();
+
+class TypeManager
+{
+public:
+	static TypeManager* instance();
+	const TypeInfo* find(const char* name)
+	{
+		auto it = m_map.find(name);
+		if (it == m_map.end()) return nullptr;
+		return it->second;
+	}
+	void registerType(const char* name, const TypeInfo* ti)
+	{
+		m_map[name] = ti;
+
+	}
+private:
+	std::map<std::string, const TypeInfo*> m_map;
+
+};
 
 
 template<class OBJ, class FIELD> inline
@@ -54,44 +74,31 @@ class FieldsEnumerator
 {
 public:
 
-	FieldsEnumerator(const TypeInfo* typeInfo_) : typeInfo(typeInfo_)
+	FieldsEnumerator(const TypeInfo* typeInfo_) : typeInfo(typeInfo_) { }
+
+	class Iterator
 	{
+	public:
+		Iterator(const TypeInfo* typeInfo_, size_t fieldIndex_) :
+			typeInfo(typeInfo_), fieldIndex(fieldIndex_) { }
 
-	}
-
-		class Iterator
+		bool operator!=(const Iterator& r) const
 		{
-		public:
-			Iterator(const TypeInfo* typeInfo_, size_t fieldIndex_) :
-				typeInfo(typeInfo_), fieldIndex(fieldIndex_)
-			{
+			return typeInfo != r.typeInfo || fieldIndex != r.fieldIndex;
+		}
+		void operator++();
 
-			}
+		const FieldInfo& operator*();
 
-			bool operator!=(const Iterator& r) const
-			{
-				return typeInfo != r.typeInfo || fieldIndex != r.fieldIndex;
-			}
-			void operator++();
+	private:
+		const TypeInfo* typeInfo = nullptr;
+		size_t fieldIndex = 0;
 
-			const FieldInfo& operator*();
+	};
 
-		private:
-			const TypeInfo* typeInfo = nullptr;
-			size_t fieldIndex = 0;
+	Iterator begin() { return Iterator(typeInfo, 0); }
 
-		};
-
-	Iterator begin()
-	{
-		return Iterator(typeInfo, 0);
-	}
-
-	Iterator end()
-	{
-		return Iterator(nullptr, 0);
-	}
-
+	Iterator end() { return Iterator(nullptr, 0); }
 
 	const TypeInfo* typeInfo = nullptr;
 };
@@ -101,18 +108,23 @@ public:
 class TypeInfo
 {
 public:
-	const char* name;
+	const char* name = "";
 	const TypeInfo* baseClass = nullptr;
-
 	const FieldInfo* fieldsArray = nullptr;
 	size_t fieldCount = 0;
 	size_t dataSize = 0;
-	//sge::Vector<>
-	FieldsEnumerator fields() const
-	{
-		return FieldsEnumerator(this);
-	}
 
+	FieldsEnumerator fields() const { return FieldsEnumerator(this); }
+
+	//typedef Object* (*Creator)();
+	Object* creator;
+
+
+	Object* createObject() const
+	{
+		if (!creator) return nullptr;
+		return creator;
+	}
 
 	bool isKindOf(const TypeInfo* t) const
 	{
@@ -126,10 +138,7 @@ public:
 	}
 
 	template<class R>
-	bool isKindOf() const
-	{
-		return isKindOf(myTypeOf<R>());
-	}
+	bool isKindOf() const { return isKindOf(myTypeOf<R>()); }
 
 
 };
@@ -215,6 +224,10 @@ public:
 	}
 };
 
+template<class T> inline
+static Object* TypeCreator() {
+	return new T();
+}
 
 template<class T, class Base>
 class TypeInfoInit : public TypeInfoInitNoBase<T>
@@ -225,8 +238,10 @@ public:
 	{
 		//static_assert(std::is_base_of<Base, T>()::value, "invaild base class");
 		this->baseClass = myTypeOf<Base>();
-
+		this->creator = TypeCreator<T>();
 	}
+
+	
 };
 
 

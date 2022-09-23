@@ -27,7 +27,21 @@ myTypeOf_impl(char32_t)
 myTypeOf_impl(wchar_t)
 
 
-myTypeOf_impl(Object)
+//myTypeOf_impl(Object)
 
+template<> const TypeInfo* myTypeOf<Object>() {
+	class TI : public TypeInfo {
+	public:
+		TI() {
+			name = "Object";
+		}
+	};
+	static TI ti;
+	return &ti;
+}
 
+TypeManager* TypeManager::instance() {
+	static TypeManager m;
+	return &m;
+}
 

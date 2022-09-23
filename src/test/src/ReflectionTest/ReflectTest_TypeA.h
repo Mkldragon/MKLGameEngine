@@ -22,13 +22,13 @@ public:
 
 };
 
-//class Rect : public Shape
-//{
-//	MY_TYPE(Rect, Shape);
-//public:
-//	float width = 0;
-//	float height = 0;
-//};
+class Rect : public Shape
+{
+	MY_TYPE(Rect, Shape);
+public:
+	float width = 0;
+	float height = 0;
+};
 
 
 
