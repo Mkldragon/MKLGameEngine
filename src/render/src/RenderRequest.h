@@ -5,7 +5,7 @@
 
 namespace sge
 {
-	class RenderRequest : public Object
+	class RenderRequest : public RenderObject
 	{
 	public:
 		Mat4f matrix_model;

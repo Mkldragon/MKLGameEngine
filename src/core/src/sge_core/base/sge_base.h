@@ -262,9 +262,9 @@ namespace sge {
 		std::atomic_int	_refCount = 0;
 	};
 
-	class Object : public RefCountBase {
+	class RenderObject : public RefCountBase {
 	public:
-		virtual ~Object() = default;
+		virtual ~RenderObject() = default;
 	};
 
 	template<class T> inline void sge_delete(T* p) noexcept { delete p; }

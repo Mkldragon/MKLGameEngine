@@ -38,3 +38,5 @@
 
 #include "sge_core/string/UtfUtil.h"
 #include "sge_core/native_ui/NativeUI.h"
+
+#include "sge_core/ECS/TypeReflection.h"

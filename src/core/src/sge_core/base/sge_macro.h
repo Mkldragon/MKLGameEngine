@@ -125,3 +125,31 @@
 //----
 
 #define SGE_NAMED_IO(SE, V)	SE.named_io(#V, V)
+
+
+
+#define SGE_TYPE(T, BASE)\
+private:\
+	using This = T;\
+	using Base = BASE;\
+	class TI_Base : public TypeInfoInit<T, BASE> {\
+	public:	\
+		TI_Base() : TypeInfoInit<T, BASE>(#T) {	\
+		}\
+	};\
+public: \
+	static const TypeInfo* s_getType(); \
+	virtual const TypeInfo* getType() const override { return s_getType(); } \
+private:\
+
+#define SGE_TYPE_IMPL(T)						\
+	template<> const TypeInfo* typeOf<T>()		\
+	{											\
+		static TypeInfoInitNoBase<T> ti(#T);	\
+		return &ti;								\
+	}											\
+
+
+#define SGE_TYPE_DEFINE(T)						\
+		template<> const TypeInfo* typeOf<T>();	\
+	

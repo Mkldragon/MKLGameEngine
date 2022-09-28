@@ -14,7 +14,7 @@ namespace sge {
 	};
 
 
-	class RenderContext : public Object
+	class RenderContext : public RenderObject
 	{
 	public:
 		using CreateDesc = RenderContext_CreateDesc;
