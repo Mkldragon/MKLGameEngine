@@ -26,8 +26,8 @@ namespace sge
 		ImGui_ImplWin32_Init(desc.window->_hwnd);
 		ImGui_ImplDX11_Init(renderer->d3dDevice(), renderer->d3dDeviceContext());
 
-
 	}
+
 	void ImGui_Sge::destory()
 	{
 		if (!_ctx) return;
@@ -41,47 +41,57 @@ namespace sge
 		ImGui_ImplWin32_Shutdown();
 		_ctx = nullptr;
 	}
+
 	void ImGui_Sge::onBeginRender(RenderContext* renderCtx)
 	{
 
-
 	}
+
 	void ImGui_Sge::onEndRender(RenderContext* renderCtx)
 	{
 
 	}
+
 	void ImGui_Sge::onDrawUI()
 	{
+
+		if (_guiRenderLayers.size() == 0) return;
+
 
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 
 
-		ImGui::Begin("Hierarchy");
-
-		String name = "Test";
-		for (size_t i = 0; i < 8; i++)
+		auto layer = *_guiRenderLayers.begin();
+		while (layer)
 		{
-			ImGui::PushID(i);
-			String nodeName = name + i;
-			bool treeNodeOpen = ImGui::TreeNodeEx(nodeName.c_str(),
-													ImGuiTreeNodeFlags_DefaultOpen | 
-													ImGuiTreeNodeFlags_FramePadding |
-													ImGuiTreeNodeFlags_OpenOnArrow |
-													ImGuiTreeNodeFlags_SpanAvailWidth, nodeName.c_str());
-			ImGui::PopID();
-			if (treeNodeOpen)
-			{
-				ImGui::TreePop();
-			}
+			layer->RenderGUI();
+			layer++;
 		}
+		//ImGui::Begin("Hierarchy");
 
-		ImGui::End();
+		//String name = "Test";
+		//for (size_t i = 0; i < 8; i++)
+		//{
+		//	ImGui::PushID(i);
+		//	String nodeName = name + i;
+		//	bool treeNodeOpen = ImGui::TreeNodeEx(nodeName.c_str(),
+		//											ImGuiTreeNodeFlags_DefaultOpen | 
+		//											ImGuiTreeNodeFlags_FramePadding |
+		//											ImGuiTreeNodeFlags_OpenOnArrow |
+		//											ImGuiTreeNodeFlags_SpanAvailWidth, nodeName.c_str());
+		//	ImGui::PopID();
+		//	if (treeNodeOpen)
+		//	{
+		//		ImGui::TreePop();
+		//	}
+		//}
+
+		//ImGui::End();
 
 		ImGui::Render();
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
 
 	}
 	void ImGui_Sge::onUIMouseEvent(UIMouseEvent& event)
@@ -89,7 +99,7 @@ namespace sge
 		ImGuiIO& io = ImGui::GetIO();
 		using Type = UIMouseEventType;
 
-		switch (event.type) 
+		switch (event.type)
 		{
 			case Type::Move: {
 				io.AddMousePosEvent(event.pos.x, event.pos.y);
@@ -108,12 +118,19 @@ namespace sge
 			} break;
 		}
 
-
 		event.isCaptureImGui = io.WantCaptureMouse;
-
 	}
 
+	void ImGui_Sge::registerLayer(ImGuiLayer* layer)
+	{
+		
+		_guiRenderLayers = layer;
+	}
 
+	void ImGui_Sge::unRegisterLayer(ImGuiLayer* layer)
+	{
+		
+	}
 
 
 	int ImGui_Sge::_mouseButton(UIMouseEventButton& event)
@@ -127,5 +144,10 @@ namespace sge
 		case Button::Button5:	return 4;
 		}
 		return 0;
+	}
+
+	ImGuiLayer::ImGuiLayer()
+	{
+
 	}
 }

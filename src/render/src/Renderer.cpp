@@ -4,9 +4,7 @@
 
 namespace sge
 {
-
 	Renderer* Renderer::s_instance = nullptr;
-
 
 	Renderer::CreateDesc::CreateDesc()
 		: multithread(false)
@@ -34,8 +32,6 @@ namespace sge
 			p->stockTextures.magenta	= p->createSolidColorTexture2D(Color4b(255, 0, 255, 255));
 			p->stockTextures.error		= p->createSolidColorTexture2D(Color4b(255, 0, 255, 255));
 		}
-
-
 		return p;
 	}
 

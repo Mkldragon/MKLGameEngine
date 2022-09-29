@@ -10,13 +10,13 @@ namespace sge
 {
 	class RenderContext;
 	class RenderRequest;
-	class ImGuiLayer;
 
 
 	class ImGuiLayer : public NonCopyable
 	{
 	public:
-		virtual void RenderGUI() {};
+		ImGuiLayer();
+		virtual void RenderGUI() = 0;
 
 	};
 
@@ -55,8 +55,9 @@ namespace sge
 
 		Vector<u8>			_vertexData;
 		Vector<u8>			_indexData;
-		Vector<ImGuiLayer>  _guiRenderLayers;
+		Vector<ImGuiLayer*, 16>  _guiRenderLayers;
 
 		ImGuiContext* _ctx = nullptr;
+		static ImGui_Sge* s_instance;
 	};
 }

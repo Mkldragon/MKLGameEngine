@@ -37,6 +37,7 @@ namespace sge {
 		void drawUI();
 		void onUIMouseEvent(UIMouseEvent& event);
 		void AssingMaterialToImGui(Material* mat);
+		void RegisterGUILayer(ImGuiLayer* layer);
 
 	protected:
 

@@ -3,6 +3,7 @@
 #include "Mesh/OBJ/ObjLoader.h"
 #include "Mesh/OBJ/Terrain.h"
 #include <sge_engine/GameObject.h>
+#include "GUI/HierarchyUI.h"
 
 
 namespace sge {
@@ -133,7 +134,7 @@ namespace sge {
 
 	#pragma endregion
 
-
+			_renderContext->RegisterGUILayer(&_hierarchy);
 		}
 
 		virtual void onCloseButton() override {
@@ -206,6 +207,7 @@ namespace sge {
 		SPtr<Material> _material;
 		SPtr<Texture2D>	_testTexture;
 
+		HierarchyUI _hierarchy;
 
 		//Renderer_DX11* renderer_dx11;
 		bool show_demo_window = true;
@@ -215,6 +217,7 @@ namespace sge {
 		RenderMesh	_renderMesh2;
 		RenderMesh  _terrain;
 		Terrain		_testTerrain;
+		
 
 		Math::Camera3f _camera;
 

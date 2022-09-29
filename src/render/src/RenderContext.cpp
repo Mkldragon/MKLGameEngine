@@ -41,6 +41,10 @@ namespace sge
 		_imgui.onUIMouseEvent(event);
 	}
 
+	void RenderContext::RegisterGUILayer(ImGuiLayer* layer)
+	{
+		_imgui.registerLayer(layer);
+	}
 
 
 	
