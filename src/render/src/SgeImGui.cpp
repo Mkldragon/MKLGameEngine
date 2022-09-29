@@ -15,17 +15,6 @@ namespace sge
 	}
 	void ImGui_Sge::create(CreateDesc& desc, Renderer_DX11* renderer)
 	{
-
-		//if (!IMGUI_CHECKVERSION())
-		//	throw SGE_ERROR("ImGui version error");
-		//ImGui::CreateContext();
-
-		//ImGuiIO& io = ImGui::GetIO();
-
-		//ImGui_ImplWin32_Init(desc.window->_hwnd);
-		//ImGui_ImplDX11_Init(renderer->d3dDevice(), renderer->d3dDeviceContext());
-
-
 		if(!IMGUI_CHECKVERSION())
 			throw SGE_ERROR("ImGui version error");
 		ImGui::CreateContext();
@@ -36,6 +25,8 @@ namespace sge
 
 		ImGui_ImplWin32_Init(desc.window->_hwnd);
 		ImGui_ImplDX11_Init(renderer->d3dDevice(), renderer->d3dDeviceContext());
+
+
 	}
 	void ImGui_Sge::destory()
 	{
@@ -66,18 +57,32 @@ namespace sge
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 
-		ImGui::Begin("Model Color Editor");
-		ImGui::SliderFloat("Size", &size, 0, 2);
-		ImGui::ColorEdit4("Color", matColor.data);
+
+		ImGui::Begin("Hierarchy");
+
+		String name = "Test";
+		for (size_t i = 0; i < 8; i++)
+		{
+			ImGui::PushID(i);
+			String nodeName = name + i;
+			bool treeNodeOpen = ImGui::TreeNodeEx(nodeName.c_str(),
+													ImGuiTreeNodeFlags_DefaultOpen | 
+													ImGuiTreeNodeFlags_FramePadding |
+													ImGuiTreeNodeFlags_OpenOnArrow |
+													ImGuiTreeNodeFlags_SpanAvailWidth, nodeName.c_str());
+			ImGui::PopID();
+			if (treeNodeOpen)
+			{
+				ImGui::TreePop();
+			}
+		}
+
 		ImGui::End();
 
 		ImGui::Render();
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-		if (_material != nullptr)
-		{
-			_material->setParam("test_color", matColor);
-		}
+
 	}
 	void ImGui_Sge::onUIMouseEvent(UIMouseEvent& event)
 	{
@@ -108,12 +113,7 @@ namespace sge
 
 	}
 
-	void ImGui_Sge::SetMaterial(Material* mat)
-	{
-		if (_material == mat) return;
 
-		_material = mat;
-	}
 
 
 	int ImGui_Sge::_mouseButton(UIMouseEventButton& event)

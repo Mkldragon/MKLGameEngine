@@ -41,10 +41,7 @@ namespace sge
 		_imgui.onUIMouseEvent(event);
 	}
 
-	void RenderContext::AssingMaterialToImGui(Material* mat)
-	{
-		_imgui.SetMaterial(mat);
-	}
+
 
 	
 

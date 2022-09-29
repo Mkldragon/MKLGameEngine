@@ -147,7 +147,8 @@ namespace sge {
 
 			if (ev.isCaptureImGui) return;
 
-			if (ev.isDragging()) {
+			if (ev.isDragging()) 
+			{
 				using Button = UIMouseEventButton;
 				switch (ev.pressedButtons) {
 				case Button::Left: {
@@ -177,7 +178,6 @@ namespace sge {
 
 			_renderContext->setFrameBufferSize(clientRect().size);
 			_renderContext->beginRender();
-			_renderContext->AssingMaterialToImGui(_material);
 
 			_renderContext->endRender();
 
@@ -189,10 +189,10 @@ namespace sge {
 
 			_renderRequest.clearFrameBuffers()->setColor({ 0, 0, 0.2f, 1 });
 
-			auto s = 0.0f;
+			auto s = 1.0f;
 			//_material->setParam("test_float", s * 0.5f);
-			//_material->setParam("test_color", Color4f(s, s, s, 1));
-			_testTerrain.render(_renderRequest);
+			_material->setParam("test_color", Color4f(s, s, s, 1));
+			//_testTerrain.render(_renderRequest);
 			_renderRequest.drawMash(SGE_LOC, _renderMesh, _material);
 
 

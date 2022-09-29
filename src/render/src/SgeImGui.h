@@ -10,6 +10,15 @@ namespace sge
 {
 	class RenderContext;
 	class RenderRequest;
+	class ImGuiLayer;
+
+
+	class ImGuiLayer : public NonCopyable
+	{
+	public:
+		virtual void RenderGUI() {};
+
+	};
 
 	class ImGui_Sge : public NonCopyable
 	{
@@ -26,7 +35,9 @@ namespace sge
 
 		void onDrawUI();
 		void onUIMouseEvent(UIMouseEvent& event);
-		void SetMaterial(Material* mat);
+
+		void registerLayer(ImGuiLayer* layer);
+		void unRegisterLayer(ImGuiLayer* layer);
 
 	private:
 		Color4f matColor {1,1,1,1};
@@ -35,7 +46,6 @@ namespace sge
 		int _mouseButton(UIMouseEventButton& event);
 
 		SPtr<Shader>	_shader;
-		SPtr<Material>	_material = nullptr;
 		SPtr<Texture2D>	_fontTex;
 
 		const VertexLayout* _vertexLayout = nullptr;
@@ -43,8 +53,9 @@ namespace sge
 		SPtr<RenderGpuBuffer>	_vertexBuffer;
 		SPtr<RenderGpuBuffer>	_indexBuffer;
 
-		Vector<u8>	_vertexData;
-		Vector<u8>	_indexData;
+		Vector<u8>			_vertexData;
+		Vector<u8>			_indexData;
+		Vector<ImGuiLayer>  _guiRenderLayers;
 
 		ImGuiContext* _ctx = nullptr;
 	};
