@@ -64,10 +64,12 @@ namespace sge
 
 
 		auto layer = *_guiRenderLayers.begin();
-		while (layer)
+		int size = 0;
+		while (size < _guiRenderLayers.size())
 		{
 			layer->RenderGUI();
 			layer++;
+			size++;
 		}
 		//ImGui::Begin("Hierarchy");
 
@@ -124,7 +126,7 @@ namespace sge
 	void ImGui_Sge::registerLayer(ImGuiLayer* layer)
 	{
 		
-		_guiRenderLayers = layer;
+		_guiRenderLayers.emplace_back(layer);
 	}
 
 	void ImGui_Sge::unRegisterLayer(ImGuiLayer* layer)

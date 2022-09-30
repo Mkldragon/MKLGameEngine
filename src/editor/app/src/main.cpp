@@ -134,6 +134,7 @@ namespace sge {
 
 	#pragma endregion
 
+			gameObjManager.onGameObjectCreate();
 			_renderContext->RegisterGUILayer(&_hierarchy);
 		}
 
@@ -216,6 +217,7 @@ namespace sge {
 		RenderMesh	_renderMesh;
 		RenderMesh	_renderMesh2;
 		RenderMesh  _terrain;
+		GameObjectManager gameObjManager;
 		Terrain		_testTerrain;
 		
 

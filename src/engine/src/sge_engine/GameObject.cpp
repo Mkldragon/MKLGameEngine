@@ -63,4 +63,71 @@ namespace sge
 		static TI ti;
 		return &ti;
 	}
+
+
+
+	GameObjectManager* GameObjectManager::s_instance = nullptr;
+	GameObjectManager::GameObjectManager()
+	{
+		SGE_ASSERT(s_instance == nullptr);
+		s_instance = this;
+	}
+
+	GameObjectManager::~GameObjectManager()
+	{
+		SGE_ASSERT(s_instance == this);
+		s_instance = nullptr;
+	}
+
+	void GameObjectManager::onGameObjectCreate()
+	{
+		obj.Objtest1 = 1;
+		obj.Objtest2 = 2;
+
+		component.test1 = 3;
+		component.test2 = 4;
+
+
+		AddToList(&obj);
+		AddToList(&component);
+		AddToList(&childComponent);
+
+	}
+
+	void GameObjectManager::AddToList(Object* obj)
+	{
+		gameObjectData.emplace_back(obj);
+	}
+	void HierarchyUI::RenderGUI()
+	{
+		GameObjectManager* gameObjManager = GameObjectManager::instance();
+
+		if (gameObjManager->gameObjectData.size() == 0) return;
+
+		ImGui::Begin("Hierarchy");
+		for (size_t i = 0; i < gameObjManager->gameObjectData.size(); i++)
+		{
+			ImGui::PushID(i);
+			auto* t = gameObjManager->gameObjectData[i]->getType();
+			String nodeName = t->name;
+			bool treeNodeOpen = ImGui::TreeNodeEx(nodeName.c_str(),
+				ImGuiTreeNodeFlags_FramePadding |
+				ImGuiTreeNodeFlags_OpenOnArrow |
+				ImGuiTreeNodeFlags_SpanAvailWidth, nodeName.c_str());
+
+			ImGui::PopID();
+			if (treeNodeOpen)	
+			{
+				for (auto& f : t->fields())
+				{
+					auto binFileName = Fmt("{}, Type={}, offset={}", f.name, f.fieldType->name, f.offset);
+					ImGui::Text(binFileName.c_str());
+				}
+				ImGui::TreePop();
+				ImGui::Separator();
+			}
+		}
+		ImGui::End();
+		
+	}
 }

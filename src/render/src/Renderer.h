@@ -36,7 +36,7 @@ namespace sge
 		static Renderer* create(CreateDesc& desc);
 		bool vsync() const { return _vsync; }
 
-		Vector<u8, 1024> vertexData;
+		Vector<u8, 1024>	vertexData;
 		RenderContext*		createContext		(RenderContext_CreateDesc& desc)	{ return onCreateContext(desc); }
 		RenderGpuBuffer*	createGpuBuffer		(RenderGpuBuffer_CreateDesc& desc)	{ return onCreateGpuBuffer(desc); }
 		SPtr<Texture2D>		createTexture2D		(Texture2D_CreateDesc& desc)		{ return onCreateTexture2D(desc); }

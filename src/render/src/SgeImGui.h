@@ -53,9 +53,9 @@ namespace sge
 		SPtr<RenderGpuBuffer>	_vertexBuffer;
 		SPtr<RenderGpuBuffer>	_indexBuffer;
 
-		Vector<u8>			_vertexData;
-		Vector<u8>			_indexData;
-		Vector<ImGuiLayer*, 16>  _guiRenderLayers;
+		Vector<u8>				_vertexData;
+		Vector<u8>				_indexData;
+		Vector<ImGuiLayer*, 16>		_guiRenderLayers;
 
 		ImGuiContext* _ctx = nullptr;
 		static ImGui_Sge* s_instance;
