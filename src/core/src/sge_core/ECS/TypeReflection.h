@@ -6,6 +6,7 @@ namespace sge
 
 	class Object;
 	class TypeInfo;
+
 	template<class T> const TypeInfo* typeOf();
 
 	class TypeManager
@@ -248,6 +249,7 @@ namespace sge
 	SGE_TYPE_DEFINE(uint16_t)
 	SGE_TYPE_DEFINE(uint32_t)
 	SGE_TYPE_DEFINE(uint64_t)
+	SGE_TYPE_DEFINE(Vec3f)
 
 	SGE_TYPE_DEFINE(char16_t)
 	SGE_TYPE_DEFINE(char32_t)

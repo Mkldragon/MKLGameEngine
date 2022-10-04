@@ -7,8 +7,14 @@ namespace sge
 {
 	class GameObject;
 
+	class Component : public Object
+	{
+		SGE_TYPE(Component, Object);
+	public:
+		Component();
+		GameObject* gameObject;
 
-
+	};
 
 	class GameObject : public Object
 	{
@@ -16,33 +22,25 @@ namespace sge
 	public:
 		float	Objtest1 = 0;
 		int		Objtest2 = 0;
-
+		void	AddComponent();
+		void	GetComponent();
+	private:
+		Vector<Component, 32> component;
 	};
 
-	class Component : public Object
-	{
-		SGE_TYPE(Component, Object);
-	public:
-		float	test1 = 0;
-		int		test2 = 0;
-	};
+
 
 	class ChildComponent : public Component
 	{
 		SGE_TYPE(ChildComponent, Component);
 	public:
-		float	childtest1 = 0;
+
+		Vec3f	childtest1{0,1,1};
 		int		childtest2 = 0;
 	};
 
 
 	
-	class HierarchyUI : public ImGuiLayer
-	{
-	public:
-		virtual void RenderGUI() override;
-
-	};
 
 
 	class GameObjectManager : public NonCopyable

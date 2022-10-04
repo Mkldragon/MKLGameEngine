@@ -301,7 +301,6 @@ int main() {
 	sge::TestReflection(component);
 
 	sge::ChildComponent childComponent;
-	childComponent.childtest1 = 1;
 	sge::TestReflection(childComponent);
 
 	
