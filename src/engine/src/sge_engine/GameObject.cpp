@@ -33,8 +33,7 @@ namespace sge
 			{
 				static FieldInfo fi[] =
 				{
-					FieldInfo("test1", &This::test1),
-					FieldInfo("test2", &This::test2),
+					FieldInfo("componet1", &This::componet1),
 				};
 				setField(fi);
 			}
@@ -65,6 +64,29 @@ namespace sge
 	}
 
 
+	const TypeInfo* Rigidbody::s_getType()
+	{
+		class TI : public TI_Base
+		{
+		public:
+			TI()
+			{
+				static FieldInfo fi[] =
+				{
+					FieldInfo("childtest1", &This::child2test1),
+					FieldInfo("childtest2", &This::child2test2),
+					FieldInfo("test4", &This::test4),
+				};
+				setField(fi);
+			}
+		};
+
+		static TI ti;
+		return &ti;
+	}
+
+
+
 
 	GameObjectManager* GameObjectManager::s_instance = nullptr;
 	GameObjectManager::GameObjectManager()
@@ -79,14 +101,12 @@ namespace sge
 		s_instance = nullptr;
 	}
 
-	void GameObjectManager::onGameObjectCreate()
-	{
-
-	}
-
 	void GameObjectManager::AddToList(Object* obj)
 	{
 		gameObjectData.emplace_back(obj);
 	}
+
+
 	
+
 }

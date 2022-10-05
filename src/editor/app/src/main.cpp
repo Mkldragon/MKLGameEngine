@@ -134,7 +134,11 @@ namespace sge {
 
 	#pragma endregion
 
-			gameObjManager.onGameObjectCreate();
+			gameObjManager.AddToList(&testObj);
+			testObj.AddComponent<ChildComponent>(new ChildComponent());
+			testObj.AddComponent<Rigidbody>(new Rigidbody());
+
+			int a = 0;
 			_renderContext->RegisterGUILayer(&_hierarchy);
 		}
 
@@ -218,6 +222,7 @@ namespace sge {
 		RenderMesh	_renderMesh2;
 		RenderMesh  _terrain;
 		GameObjectManager gameObjManager;
+		GameObject	testObj;
 		Terrain		_testTerrain;
 		
 
@@ -294,15 +299,6 @@ int main() {
 
 	sge::EditorApp app;
 	sge::EditorApp::CreateDesc desc;
-
-
-	sge::Component component;
-	component.test1 = 3;
-	sge::TestReflection(component);
-
-	sge::ChildComponent childComponent;
-	sge::TestReflection(childComponent);
-
 	
 	app.run(desc);
 

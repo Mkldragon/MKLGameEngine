@@ -138,7 +138,7 @@ namespace sge
 	template<> const TypeInfo* typeOf<Object>();
 
 
-	class Object
+	class Object : public RefCountBase
 	{
 	public:
 		Object() = default;
