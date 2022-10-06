@@ -4,6 +4,7 @@
 #include "Mesh/OBJ/Terrain.h"
 #include <sge_engine/GameObject.h>
 #include "GUI/HierarchyUI.h"
+#include "GUI/InspectorUI.h"
 
 
 namespace sge {
@@ -135,10 +136,15 @@ namespace sge {
 	#pragma endregion
 
 			gameObjManager.AddToList(&testObj);
-			testObj.AddComponent<ChildComponent>(new ChildComponent());
-			testObj.AddComponent<Rigidbody>(new Rigidbody());
+			testObj.AddComponent<Transform>();
+			testObj.AddComponent<Rigidbody>();
+
+			gameObjManager.AddToList(&testObj2);
+			testObj2.AddComponent<Transform>();
 
 			int a = 0;
+
+			_renderContext->RegisterGUILayer(&_inspector);
 			_renderContext->RegisterGUILayer(&_hierarchy);
 		}
 
@@ -213,6 +219,11 @@ namespace sge {
 		SPtr<Texture2D>	_testTexture;
 
 		HierarchyUI _hierarchy;
+		InspectorUI _inspector;
+
+
+		GameObject	testObj;
+		GameObject	testObj2;
 
 		//Renderer_DX11* renderer_dx11;
 		bool show_demo_window = true;
@@ -222,7 +233,6 @@ namespace sge {
 		RenderMesh	_renderMesh2;
 		RenderMesh  _terrain;
 		GameObjectManager gameObjManager;
-		GameObject	testObj;
 		Terrain		_testTerrain;
 		
 

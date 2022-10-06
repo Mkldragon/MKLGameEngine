@@ -43,7 +43,7 @@ namespace sge
 		return &ti;
 	}
 
-	const TypeInfo* ChildComponent::s_getType()
+	const TypeInfo* Transform::s_getType()
 	{
 		class TI : public TI_Base
 		{
@@ -52,8 +52,9 @@ namespace sge
 			{
 				static FieldInfo fi[] =
 				{
-					FieldInfo("childtest1", &This::childtest1),
-					FieldInfo("childtest2", &This::childtest2),
+					FieldInfo("childtest1", &This::position),
+					FieldInfo("childtest2", &This::rotation),
+					FieldInfo("childtest2", &This::localScale),
 				};
 				setField(fi);
 			}
@@ -107,6 +108,10 @@ namespace sge
 	}
 
 
-	
+
+	void GameObjectManager::SelectHirearchyObject(GameObject* obj)
+	{
+		selectedObject = obj;
+	}
 
 }

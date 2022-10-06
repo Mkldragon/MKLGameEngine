@@ -20,6 +20,8 @@ namespace sge
 	SGE_TYPE_IMPL(uint32_t)
 	SGE_TYPE_IMPL(uint64_t)
 	SGE_TYPE_IMPL(Vec3f)
+	SGE_TYPE_IMPL(Vec2d)
+	SGE_TYPE_IMPL(Tuple3f)
 
 	SGE_TYPE_IMPL(char16_t)
 	SGE_TYPE_IMPL(char32_t)

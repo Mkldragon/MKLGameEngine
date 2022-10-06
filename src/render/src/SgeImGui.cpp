@@ -63,14 +63,15 @@ namespace sge
 		ImGui::NewFrame();
 
 
+
 		auto layer = *_guiRenderLayers.begin();
 		int size = 0;
-		while (size < _guiRenderLayers.size())
+
+		for (size_t i = 0; i < _guiRenderLayers.size(); i++)
 		{
-			layer->RenderGUI();
-			layer++;
-			size++;
+			_guiRenderLayers[i]->RenderGUI();
 		}
+
 		//ImGui::Begin("Hierarchy");
 
 		//String name = "Test";

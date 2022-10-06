@@ -19,13 +19,14 @@ namespace sge
 	};
 
 
-	class ChildComponent : public Component
+	class Transform : public Component
 	{
-		SGE_TYPE(ChildComponent, Component);
+		SGE_TYPE(Transform, Component);
 	public:
+		Tuple3f position { 0, 0, 0 };
+		Tuple3f rotation { 0, 0, 0 };
+		Tuple3f localScale{ 0, 0, 0 };
 
-		Vec3f	childtest1{ 0,1,1 };
-		int		childtest2 = 0;
 	};
 
 
@@ -56,9 +57,9 @@ namespace sge
 		}
 
 		template<class T>
-		void AddComponent(T* t)
+		void AddComponent()
 		{ 
-			this->AddComponentToObj(t);
+			this->AddComponentToObj(new T());
 		}
 		Vector<SPtr<Component>, 32> _component;
 	private:
@@ -75,13 +76,13 @@ namespace sge
 
 		void CreateGameObject();
 		void AddToList(Object* obj);
-
+		void SelectHirearchyObject(GameObject* obj);
 		Vector<SPtr<Object> , 1024> gameObjectData;
-
+		GameObject* selectedObject = nullptr;
 	private:
 		static GameObjectManager* s_instance;
 		Component component;
-		ChildComponent childComponent;
+		Transform childComponent;
 	};
 
 
