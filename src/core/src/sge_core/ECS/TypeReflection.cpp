@@ -9,6 +9,7 @@ namespace sge
 
 	SGE_TYPE_IMPL(float)
 	SGE_TYPE_IMPL(double)
+	SGE_TYPE_IMPL(bool)
 
 	SGE_TYPE_IMPL(int8_t)
 	SGE_TYPE_IMPL(int16_t)
@@ -22,6 +23,7 @@ namespace sge
 	SGE_TYPE_IMPL(Vec3f)
 	SGE_TYPE_IMPL(Vec2d)
 	SGE_TYPE_IMPL(Tuple3f)
+	SGE_TYPE_IMPL(String)
 
 	SGE_TYPE_IMPL(char16_t)
 	SGE_TYPE_IMPL(char32_t)

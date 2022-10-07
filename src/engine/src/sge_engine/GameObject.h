@@ -19,6 +19,7 @@ namespace sge
 	};
 
 
+
 	class Transform : public Component
 	{
 		SGE_TYPE(Transform, Component);
@@ -29,6 +30,22 @@ namespace sge
 
 	};
 
+	class Collider : public Component
+	{
+		SGE_TYPE(Collider, Component);
+	public:
+		bool isTrigger = false;
+
+	};
+
+	class BoxCollider : public Collider
+	{
+		SGE_TYPE(BoxCollider, Collider);
+	public:
+		Tuple3f center{ 0, 0, 0 };
+		Tuple3f size{ 0,0,0 };
+
+	};
 
 
 	class Rigidbody : public Component
@@ -48,11 +65,13 @@ namespace sge
 	{
 		SGE_TYPE(GameObject, Object);
 	public:
+		String		name = "GameObject";
 		float		Objtest1 = 0;
 		int			Objtest2 = 0;
 
 		void AddComponentToObj (Component* component) 
 		{
+			component->gameObject = this;
 			this->_component.emplace_back(component);
 		}
 
@@ -61,6 +80,7 @@ namespace sge
 		{ 
 			this->AddComponentToObj(new T());
 		}
+
 		Vector<SPtr<Component>, 32> _component;
 	private:
 	};

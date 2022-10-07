@@ -240,6 +240,7 @@ namespace sge
 
 	SGE_TYPE_DEFINE(float)
 	SGE_TYPE_DEFINE(double)
+	SGE_TYPE_DEFINE(bool)
 
 	SGE_TYPE_DEFINE(int8_t)
 	SGE_TYPE_DEFINE(int16_t)
@@ -252,6 +253,7 @@ namespace sge
 	SGE_TYPE_DEFINE(Vec3f)
 	SGE_TYPE_DEFINE(Vec2d)
 	SGE_TYPE_DEFINE(Tuple3f)
+	SGE_TYPE_DEFINE(String)
 
 	SGE_TYPE_DEFINE(char16_t)
 	SGE_TYPE_DEFINE(char32_t)

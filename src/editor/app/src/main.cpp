@@ -136,8 +136,9 @@ namespace sge {
 	#pragma endregion
 
 			gameObjManager.AddToList(&testObj);
+			testObj.name = "TestObj1";
 			testObj.AddComponent<Transform>();
-			testObj.AddComponent<Rigidbody>();
+			testObj.AddComponent<BoxCollider>();
 
 			gameObjManager.AddToList(&testObj2);
 			testObj2.AddComponent<Transform>();

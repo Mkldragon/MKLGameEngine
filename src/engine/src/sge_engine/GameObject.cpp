@@ -3,6 +3,46 @@
 
 namespace sge
 {
+	const TypeInfo* Collider::s_getType()
+	{
+		class TI : public TI_Base
+		{
+		public:
+			TI()
+			{
+				static FieldInfo fi[] =
+				{
+					FieldInfo("isTrigger", &This::isTrigger),
+				};
+				setField(fi);
+			}
+		};
+
+		static TI ti;
+		return &ti;
+	}
+
+	const TypeInfo* BoxCollider::s_getType()
+	{
+		class TI : public TI_Base
+		{
+		public:
+			TI()
+			{
+				static FieldInfo fi[] =
+				{
+					FieldInfo("Center", &This::center),
+					FieldInfo("Size", &This::size),
+				};
+				setField(fi);
+			}
+		};
+
+		static TI ti;
+		return &ti;
+	}
+
+
 	const TypeInfo* GameObject::s_getType()
 	{
 		class TI : public TI_Base
@@ -63,6 +103,8 @@ namespace sge
 		static TI ti;
 		return &ti;
 	}
+
+
 
 
 	const TypeInfo* Rigidbody::s_getType()

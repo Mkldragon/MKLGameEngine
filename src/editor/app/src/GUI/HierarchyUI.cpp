@@ -17,8 +17,9 @@ namespace sge
 		for (size_t i = 0; i < gameObjManager->gameObjectData.size(); i++)
 		{
 			ImGui::PushID(i);
+			GameObject* obj = my_cast<GameObject>(gameObjManager->gameObjectData[i].ptr());
 			auto* t = gameObjManager->gameObjectData[i]->getType();
-			String nodeName = t->name;
+			String nodeName = obj->name.c_str();
 
 			bool treeNodeOpen = ImGui::TreeNodeEx(nodeName.c_str(),
 				ImGuiTreeNodeFlags_FramePadding |
@@ -27,7 +28,6 @@ namespace sge
 
 			if (ImGui::IsItemClicked())
 			{
-				GameObject* obj = my_cast<GameObject>(gameObjManager->gameObjectData[i].ptr());
 				gameObjManager->SelectHirearchyObject(obj);
 			}
 
