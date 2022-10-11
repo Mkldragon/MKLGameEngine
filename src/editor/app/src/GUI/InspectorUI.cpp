@@ -61,7 +61,6 @@ namespace sge
 		if (gameObjManager->selectedObject != nullptr)
 		{
 			GameObject* obj = gameObjManager->selectedObject;
-
 			ImGui::Text(obj->name.c_str());
 
 
@@ -70,24 +69,16 @@ namespace sge
 				auto* h = obj->_component[j]->getType();
 
 				
-					Transform* transform = my_cast<Transform>(obj->_component[j]);
-					BoxCollider* boxCollider = my_cast<BoxCollider>(obj->_component[j]);
+				Transform* transform = my_cast<Transform>(obj->_component[j]);
+				BoxCollider* boxCollider = my_cast<BoxCollider>(obj->_component[j]);
+
 				if (transform)
 					TranformGUI(transform);
 				
 
 				else if (boxCollider)
 					BoxColliderGUI(boxCollider);
-			
-				else
-				{
-					ImGui::Text(h->name);
-					for (auto& f : h->fields())
-					{
-						auto binFileName = Fmt("{}, Type={}, offset={}", f.name, f.fieldType->name, f.offset);
-						ImGui::Text(binFileName.c_str());
-					}
-				}
+
 			}
 
 			if (ImGui::Button("Add Component"))

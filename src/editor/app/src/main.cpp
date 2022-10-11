@@ -137,13 +137,12 @@ namespace sge {
 
 			gameObjManager.AddToList(&testObj);
 			testObj.name = "TestObj1";
-			testObj.AddComponent<Transform>();
 			testObj.AddComponent<BoxCollider>();
 
 			gameObjManager.AddToList(&testObj2);
-			testObj2.AddComponent<Transform>();
 
-			int a = 0;
+			gameObjManager.AddToList(&childrenObj);
+			childrenObj.transform->setParent(testObj.transform);
 
 			_renderContext->RegisterGUILayer(&_inspector);
 			_renderContext->RegisterGUILayer(&_hierarchy);
@@ -225,6 +224,7 @@ namespace sge {
 
 		GameObject	testObj;
 		GameObject	testObj2;
+		GameObject	childrenObj;
 
 		//Renderer_DX11* renderer_dx11;
 		bool show_demo_window = true;

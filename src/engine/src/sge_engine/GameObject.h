@@ -24,10 +24,34 @@ namespace sge
 	{
 		SGE_TYPE(Transform, Component);
 	public:
-		Tuple3f position { 0, 0, 0 };
-		Tuple3f rotation { 0, 0, 0 };
-		Tuple3f localScale{ 0, 0, 0 };
 
+		Transform* parent;
+		Vec3f position{ 0, 0, 0 };
+		Vec3f rotation{ 0, 0, 0 };
+		Vec3f localScale{ 0, 0, 0 };
+
+
+		void setParent(Transform* p)
+		{
+			parent = p;
+			p->AddChildren(this);
+		};
+
+		Transform* getChild(int index) 
+		{ 
+			if (index >= _children.size()) return  nullptr;
+			else return _children[index];
+		};
+
+		void AddChildren(Transform* child)
+		{
+			_children.emplace_back(child);
+		};
+		int getChildCount() { return _children.size(); };
+
+	private:
+		Vector<Transform*, 64> _children;
+		bool isDirty;
 	};
 
 	class Collider : public Component
@@ -42,8 +66,8 @@ namespace sge
 	{
 		SGE_TYPE(BoxCollider, Collider);
 	public:
-		Tuple3f center{ 0, 0, 0 };
-		Tuple3f size{ 0,0,0 };
+		Vec3f center{ 0, 0, 0 };
+		Vec3f size{ 0,0,0 };
 
 	};
 
@@ -65,6 +89,7 @@ namespace sge
 	{
 		SGE_TYPE(GameObject, Object);
 	public:
+		GameObject() { transform = this->AddComponent<Transform>(); }
 		String		name = "GameObject";
 		float		Objtest1 = 0;
 		int			Objtest2 = 0;
@@ -76,12 +101,29 @@ namespace sge
 		}
 
 		template<class T>
-		void AddComponent()
-		{ 
-			this->AddComponentToObj(new T());
+		T* GetComponent()
+		{
+			for (auto* c = _component.begin(); c != _component.end(); c++)
+			{
+				if (c->ptr()->getType()->isKindOf<T>())
+					return my_cast<T>(c->ptr());
+			}
+			return nullptr;
 		}
 
+
+		template<class T>
+		T* AddComponent()
+		{
+			T* t = new T();
+			this->AddComponentToObj(t);
+			return t;
+		}
+
+		Transform* transform;
 		Vector<SPtr<Component>, 32> _component;
+
+		
 	private:
 	};
 

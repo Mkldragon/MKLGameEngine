@@ -5,79 +5,65 @@ namespace sge
 {
 
 
-
-
 	void HierarchyUI::RenderGUI()
 	{
+		_id = 0;
 		GameObjectManager* gameObjManager = GameObjectManager::instance();
 
 		if (gameObjManager->gameObjectData.size() == 0) return;
 
 		ImGui::Begin("Hierarchy");
+
 		for (size_t i = 0; i < gameObjManager->gameObjectData.size(); i++)
 		{
-			ImGui::PushID(i);
+			ImGui::PushID(_id);
 			GameObject* obj = my_cast<GameObject>(gameObjManager->gameObjectData[i].ptr());
-			auto* t = gameObjManager->gameObjectData[i]->getType();
+			auto* t = obj->getType();
 			String nodeName = obj->name.c_str();
+			Transform* trans = obj->GetComponent<Transform>();
+
+			if (trans->parent != nullptr)
+			{
+				ImGui::PopID();
+				continue;
+			}
+
+
+			if (trans->getChildCount() == 0)
+			{
+				ImGui::Selectable(nodeName.c_str(), false);
+				ImGui::PopID();
+				if (ImGui::IsItemClicked()) gameObjManager->SelectHirearchyObject(obj);
+				continue;
+			}
+	
+			if (ImGui::IsItemClicked()) gameObjManager->SelectHirearchyObject(obj);
 
 			bool treeNodeOpen = ImGui::TreeNodeEx(nodeName.c_str(),
 				ImGuiTreeNodeFlags_FramePadding |
 				ImGuiTreeNodeFlags_OpenOnArrow |
 				ImGuiTreeNodeFlags_SpanAvailWidth, nodeName.c_str());
 
-			if (ImGui::IsItemClicked())
-			{
-				gameObjManager->SelectHirearchyObject(obj);
-			}
-
 			ImGui::PopID();
 			if (treeNodeOpen)
 			{
-				
-
-
-
-			//	for (auto& f : t->fields())
-			//	{
-			//		auto binFileName = Fmt("{}, Type={}, offset={}", f.name, f.fieldType->name, f.offset);
-			//		ImGui::Text(binFileName.c_str());
-			//	}
-
-			//	GameObject* obj = my_cast<GameObject>(gameObjManager->gameObjectData[i].ptr());
-			//	if (obj)
-			//	{
-			//		if (obj->_component.size() == 0) break;
-
-
-			//		for (size_t j = 0; j < obj->_component.size(); j++)
-			//		{
-			//			auto* h = obj->_component[j]->getType();
-
-			//			Transform* transform = my_cast<Transform>(obj->_component[j]);
-			//			if (transform)
-			//				RenderTranform(transform);
-
-			//			else
-			//			{
-			//				ImGui::Text(h->name);
-			//				for (auto& f : h->fields())
-			//				{
-			//					auto binFileName = Fmt("{}, Type={}, offset={}", f.name, f.fieldType->name, f.offset);
-			//					ImGui::Text(binFileName.c_str());
-			//				}
-			//			}
-
-			//		}
-			//	}
-
-
 				ImGui::TreePop();
 				ImGui::Separator();
 			}
+			_id++;
 		}
+
+
 		ImGui::End();
 
 	}
+
+	void HierarchyUI::ChildGameObjectHandle(Vector<Transform*, 64>* children)
+	{
+		for (auto* i = children->begin(); i != children->end(); i++) {
+			std::cout << i << " ";
+		}
+	}
+
 
 }
