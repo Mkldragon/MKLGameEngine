@@ -16,41 +16,14 @@ namespace sge
 
 		for (size_t i = 0; i < gameObjManager->gameObjectData.size(); i++)
 		{
-			ImGui::PushID(_id);
 			GameObject* obj = my_cast<GameObject>(gameObjManager->gameObjectData[i].ptr());
 			auto* t = obj->getType();
 			String nodeName = obj->name.c_str();
 			Transform* trans = obj->GetComponent<Transform>();
+			if (trans->parent != nullptr) continue;
 
-			if (trans->parent != nullptr)
-			{
-				ImGui::PopID();
-				continue;
-			}
+			ChildGameObjectHandle(trans);
 
-
-			if (trans->getChildCount() == 0)
-			{
-				ImGui::Selectable(nodeName.c_str(), false);
-				ImGui::PopID();
-				if (ImGui::IsItemClicked()) gameObjManager->SelectHirearchyObject(obj);
-				continue;
-			}
-	
-			if (ImGui::IsItemClicked()) gameObjManager->SelectHirearchyObject(obj);
-
-			bool treeNodeOpen = ImGui::TreeNodeEx(nodeName.c_str(),
-				ImGuiTreeNodeFlags_FramePadding |
-				ImGuiTreeNodeFlags_OpenOnArrow |
-				ImGuiTreeNodeFlags_SpanAvailWidth, nodeName.c_str());
-
-			ImGui::PopID();
-			if (treeNodeOpen)
-			{
-				ImGui::TreePop();
-				ImGui::Separator();
-			}
-			_id++;
 		}
 
 
@@ -58,11 +31,42 @@ namespace sge
 
 	}
 
-	void HierarchyUI::ChildGameObjectHandle(Vector<Transform*, 64>* children)
+	void HierarchyUI::ChildGameObjectHandle(Transform* transform)
 	{
-		for (auto* i = children->begin(); i != children->end(); i++) {
-			std::cout << i << " ";
+		GameObjectManager* gameObjManager = GameObjectManager::instance();
+
+		const char* objname = transform->gameObject->name.c_str();
+		bool treeNodeOpen = ImGui::TreeNodeEx(objname,
+			ImGuiTreeNodeFlags_FramePadding |
+			ImGuiTreeNodeFlags_DefaultOpen |
+			ImGuiTreeNodeFlags_OpenOnArrow |
+			(selected ? ImGuiTreeNodeFlags_Selected : 0) |
+			(transform->getChildCount() == 0 ? ImGuiTreeNodeFlags_Leaf : 0), objname);
+
+		ImGui::PushID(_id);
+		if (ImGui::BeginPopupContextItem()) {
+			ImGui::EndPopup();
 		}
+		ImGui::PopID();
+
+		if (ImGui::IsItemClicked()) {
+			gameObjManager->SelectHirearchyObject(transform->gameObject);
+		}
+
+		if (treeNodeOpen)
+		{
+			int i = 0;
+			while (transform->getChild(i) != nullptr)
+			{
+				ChildGameObjectHandle(transform->getChild(i));
+				i++;
+			}
+			ImGui::TreePop();
+			ImGui::Separator();
+		}
+		_id++;
+
+
 	}
 
 

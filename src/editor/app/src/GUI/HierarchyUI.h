@@ -11,8 +11,10 @@ namespace sge
 	public:
 		virtual void RenderGUI() override;
 	private:
-		void ChildGameObjectHandle(Vector<Transform*, 64>* children);
+		void ChildGameObjectHandle(Transform* transform);
 		int _id = 0;
+
+		int selected = 0;
 	};
 
 }

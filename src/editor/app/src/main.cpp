@@ -142,7 +142,19 @@ namespace sge {
 			gameObjManager.AddToList(&testObj2);
 
 			gameObjManager.AddToList(&childrenObj);
+			childrenObj.name = "Childen1";
 			childrenObj.transform->setParent(testObj.transform);
+
+
+			gameObjManager.AddToList(&childrenObj1);
+			childrenObj1.name = "Childen2";
+			childrenObj1.transform->setParent(testObj.transform);
+
+			gameObjManager.AddToList(&childrenObj2); 
+			childrenObj2.name = "Childen3";
+			childrenObj2.transform->setParent(childrenObj.transform);
+
+
 
 			_renderContext->RegisterGUILayer(&_inspector);
 			_renderContext->RegisterGUILayer(&_hierarchy);
@@ -225,6 +237,8 @@ namespace sge {
 		GameObject	testObj;
 		GameObject	testObj2;
 		GameObject	childrenObj;
+		GameObject	childrenObj1;
+		GameObject	childrenObj2;
 
 		//Renderer_DX11* renderer_dx11;
 		bool show_demo_window = true;
