@@ -5,7 +5,6 @@ namespace sge
 {
 	void TranformGUI(Transform* trans)
 	{
-
 		ImGui::Separator();
 
 		ImGui::Text("Transform");
@@ -14,17 +13,10 @@ namespace sge
 		ImGui::SameLine(150);
 		ImGui::Button("Reset");
 
-		ImGui::Text("Position");
-		ImGui::SameLine(200);
-		ImGui::InputFloat3("##dev9", &trans->position[0]);
 
-		ImGui::Text("Rotation");
-		ImGui::SameLine(200);
-		ImGui::InputFloat3("##dev9", &trans->rotation[0]);
-
-		ImGui::Text("Scale");
-		ImGui::SameLine(200);
-		ImGui::InputFloat3("##dev9", &trans->localScale[0]);
+		ImGui::DragFloat3("Position", &trans->position[0], 0.01f, -200.0f, 100.0f);
+		ImGui::DragFloat3("Rotation", &trans->rotation[0], 0.01f, -200.0f, 100.0f);
+		ImGui::DragFloat3("Scale", &trans->localScale[0], 0.01f, -200.0f, 100.0f);
 
 		ImGui::Separator();
 
@@ -38,13 +30,10 @@ namespace sge
 		ImGui::SameLine(200);
 		ImGui::Checkbox("##dev9", &boxCollider->isTrigger);
 
-		ImGui::Text("Center");
-		ImGui::SameLine(200);
-		ImGui::InputFloat3("##dev9", &boxCollider->center[0]);
 
-		ImGui::Text("Size");
-		ImGui::SameLine(200);
-		ImGui::InputFloat3("##dev9", &boxCollider->size[0]);
+		ImGui::DragFloat3("Center", &boxCollider->center[0], 0.01f, -200.0f, 100.0f);
+		ImGui::DragFloat3("Size", &boxCollider->size[0], 0.01f, -200.0f, 100.0f);
+
 
 		ImGui::Separator();
 
@@ -84,6 +73,15 @@ namespace sge
 			if (ImGui::Button("Add Component"))
 			{
 				gameObjManager->selectedObject->AddComponent<Rigidbody>();
+			}
+
+			if (ImGui::Button("ShowLog"))
+			{
+				GameObject* g = gameObjManager->selectedObject;
+				std::cout << g->transform->position.x << " " << g->transform->position.y << " " << g->transform->position.z << "\n";
+
+				std::cout << g->transform->rotation.x << " " << g->transform->rotation.y << " " << g->transform->rotation.z << "\n";
+				std::cout << g->transform->localScale.x << " " << g->transform->localScale.y << " " << g->transform->localScale.z << "\n";
 			}
 		}
 

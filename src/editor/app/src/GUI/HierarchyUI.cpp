@@ -23,7 +23,6 @@ namespace sge
 			if (trans->parent != nullptr) continue;
 
 			ChildGameObjectHandle(trans);
-
 		}
 
 
@@ -51,6 +50,16 @@ namespace sge
 
 		if (ImGui::IsItemClicked()) {
 			gameObjManager->SelectHirearchyObject(transform->gameObject);
+		}
+
+		if (ImGui::BeginDragDropTarget()) {
+			// Some processing...
+			ImGui::EndDragDropTarget();
+		}
+
+		if (ImGui::BeginDragDropSource()) {
+			// Some processing...
+			ImGui::EndDragDropSource();
 		}
 
 		if (treeNodeOpen)
