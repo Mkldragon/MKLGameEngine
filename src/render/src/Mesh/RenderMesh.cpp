@@ -31,9 +31,9 @@ namespace sge
 		}
 	};
 
-	void RenderMesh::create(const EditMesh& src)
+	void RenderMesh::create(EditMesh* src)
 	{
-
+		_editMesh = src;
 		using Helper = RenderMesh_InternalHelper;
 		clear();
 
@@ -44,18 +44,18 @@ namespace sge
 		u8 binormalCount = 0;
 
 		_primitive = RenderPrimitiveType::Triangles;
-		size_t vertexCount = src.pos.size();
+		size_t vertexCount = src->pos.size();
 
 		if (vertexCount <= 0)
 			return;
 
-		if (Helper::hasAttr(src.color.size(), vertexCount)) colorCount = 1;
-		if (Helper::hasAttr(src.normal.size(), vertexCount)) normalCount = 1;
-		if (Helper::hasAttr(src.tangent.size(), vertexCount)) tangentCount = 1;
-		if (Helper::hasAttr(src.binormal.size(), vertexCount)) binormalCount = 1;
+		if (Helper::hasAttr(src->color.size(), vertexCount)) colorCount = 1;
+		if (Helper::hasAttr(src->normal.size(), vertexCount)) normalCount = 1;
+		if (Helper::hasAttr(src->tangent.size(), vertexCount)) tangentCount = 1;
+		if (Helper::hasAttr(src->binormal.size(), vertexCount)) binormalCount = 1;
 
 		for (u8 i = 0; i < EditMesh::kUvCountMax; i++) {
-			if (Helper::hasAttr(src.uv[i].size(), vertexCount)) uvCount = i + 1;
+			if (Helper::hasAttr(src->uv[i].size(), vertexCount)) uvCount = i + 1;
 		}
 
 		auto vertexType = VertexTypeUtil::make(
@@ -71,9 +71,28 @@ namespace sge
 		}
 
 		setSubMeshCount(1);
-		_subMeshes[0].create(src);
+		_subMeshes[0].create(*src);
 
 		
+	}
+
+	void RenderMesh::UpdateMeshPosition(Vec3f* position)
+	{
+		if (_editMesh == nullptr) return;
+		for (auto& pos : _editMesh->pos)
+		{
+			pos.x += position->x;
+			pos.y += position->y;
+			pos.z += position->z;
+		}
+
+		for (auto& submesh : _subMeshes)
+		{
+			auto* pData = submesh.vertexData.data();
+			auto vc = submesh._vertexCount;
+
+			submesh.uploadToGPU();
+		}
 	}
 
 	void RenderMesh::clear() {
@@ -82,9 +101,7 @@ namespace sge
 	}
 
 
-
-
-	void RenderSubMesh::create(const EditMesh& src) {
+	void RenderSubMesh::create(EditMesh& src) {
 		using Helper = RenderMesh_InternalHelper;
 
 		clear();
@@ -92,13 +109,25 @@ namespace sge
 		_vertexCount = src.pos.size();
 		_indexCount = src.index.size();
 
+		auto* vertexLayout = _mesh->vertexLayout();
+
 		if (_vertexCount <= 0)
 			return;
 
-		auto* vertexLayout = _mesh->vertexLayout();
+		
 
-		Vector<u8, 1024>	vertexData;
+		
 		vertexData.resize(vertexLayout->stride * _vertexCount);
+		uploadToGPU();
+
+	}
+
+	void RenderSubMesh::uploadToGPU()
+	{
+		using Helper = RenderMesh_InternalHelper;
+
+		auto* vertexLayout = _mesh->vertexLayout();
+		auto* src = _mesh->editMesh();
 
 		auto* pData = vertexData.data();
 		auto stride = vertexLayout->stride;
@@ -112,23 +141,23 @@ namespace sge
 			auto semanticType = U::getType(e.semantic);
 			auto semanticIndex = U::getIndex(e.semantic);
 
-			switch (semanticType) 
+			switch (semanticType)
 			{
-				case ST::TEXCOORD: {
-					if (semanticIndex < EditMesh::kUvCountMax) {
-						Helper::copyVertexData(pData, vc, e, stride, src.uv[semanticIndex].data()); break;
-					}
-					continue;
+			case ST::TEXCOORD: {
+				if (semanticIndex < EditMesh::kUvCountMax) {
+					Helper::copyVertexData(pData, vc, e, stride, src->uv[semanticIndex].data()); break;
+				}
+				continue;
 			}
-								 break;
+							 break;
 			}
 
 			switch (e.semantic) {
-			case S::Pos:		Helper::copyVertexData(pData, vc, e, stride, src.pos.data());   break;
-			case S::Color0:		Helper::copyVertexData(pData, vc, e, stride, src.color.data()); break;
-			case S::Normal:		Helper::copyVertexData(pData, vc, e, stride, src.normal.data()); break;
-			case S::Tangent:	Helper::copyVertexData(pData, vc, e, stride, src.tangent.data()); break;
-			case S::Binormal:	Helper::copyVertexData(pData, vc, e, stride, src.binormal.data()); break;
+			case S::Pos:		Helper::copyVertexData(pData, vc, e, stride, src->pos.data());   break;
+			case S::Color0:		Helper::copyVertexData(pData, vc, e, stride, src->color.data()); break;
+			case S::Normal:		Helper::copyVertexData(pData, vc, e, stride, src->normal.data()); break;
+			case S::Tangent:	Helper::copyVertexData(pData, vc, e, stride, src->tangent.data()); break;
+			case S::Binormal:	Helper::copyVertexData(pData, vc, e, stride, src->binormal.data()); break;
 			}
 		}
 
@@ -148,13 +177,13 @@ namespace sge
 
 			if (_vertexCount > UINT16_MAX) {
 				_indexType = RenderDataType::UInt32;
-				indexData = spanCast<const u8, const u32>(src.index);
+				indexData = spanCast<const u8, const u32>(src->index);
 			}
 			else {
 				_indexType = RenderDataType::UInt16;
-				index16Data.resize(src.index.size());
-				for (size_t i = 0; i < src.index.size(); i++) {
-					u32 vi = src.index[i];
+				index16Data.resize(src->index.size());
+				for (size_t i = 0; i < src->index.size(); i++) {
+					u32 vi = src->index[i];
 					index16Data[i] = static_cast<u16>(vi);
 				}
 				indexData = spanCast<const u8, const u16>(index16Data);

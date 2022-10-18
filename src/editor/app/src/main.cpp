@@ -70,24 +70,24 @@ namespace sge {
 
 			_material->setParam("mainTex", _testTexture);
 
+			//{
+			//	EditMesh editMesh;
+			//	ObjLoader::LoadFile(editMesh, "Assets/Mesh/test.obj");
+
+			//	for (size_t i = editMesh.color.size(); i < editMesh.pos.size(); i++) {
+			//		editMesh.color.emplace_back(255, 255, 255, 255);
+			//	}
+			//	_renderMesh.create(editMesh);
+			//}
+
+
 			{
-				EditMesh editMesh;
-				ObjLoader::LoadFile(editMesh, "Assets/Mesh/test.obj");
-
-				for (size_t i = editMesh.color.size(); i < editMesh.pos.size(); i++) {
-					editMesh.color.emplace_back(255, 255, 255, 255);
-				}
-				_renderMesh.create(editMesh);
-			}
-
-
-			{
-				EditMesh editMesh2;
+				
 				ObjLoader::LoadFile(editMesh2, "Assets/Mesh/Plane.obj");
 				for (size_t i = editMesh2.color.size(); i < editMesh2.pos.size(); i++) {
 					editMesh2.color.emplace_back(255, 255, 255, 255);
 				}
-				_renderMesh2.create(editMesh2);
+				_renderMesh2.create(&editMesh2);
 			}
 
 			{
@@ -135,24 +135,28 @@ namespace sge {
 
 	#pragma endregion
 
-			gameObjManager.AddToList(&testObj);
-			testObj.name = "TestObj1";
-			testObj.AddComponent<BoxCollider>();
 
-			gameObjManager.AddToList(&testObj2);
+			{//Game Object Test
+				gameObjManager.AddToList(&testObj);
+				testObj.name = "TestObj1";
+				testObj.AddComponent<BoxCollider>();
 
-			gameObjManager.AddToList(&childrenObj);
-			childrenObj.name = "Childen1";
-			childrenObj.transform->setParent(testObj.transform);
+				gameObjManager.AddToList(&testObj2);
+
+				gameObjManager.AddToList(&childrenObj);
+				childrenObj.name = "Childen1";
+				childrenObj.transform->setParent(testObj.transform);
 
 
-			gameObjManager.AddToList(&childrenObj1);
-			childrenObj1.name = "Childen2";
-			childrenObj1.transform->setParent(testObj.transform);
+				gameObjManager.AddToList(&childrenObj1);
+				childrenObj1.name = "Childen2";
+				childrenObj1.transform->setParent(testObj.transform);
 
-			gameObjManager.AddToList(&childrenObj2); 
-			childrenObj2.name = "Childen3";
-			childrenObj2.transform->setParent(childrenObj.transform);
+				gameObjManager.AddToList(&childrenObj2); 
+				childrenObj2.name = "Childen3";
+				childrenObj2.transform->setParent(childrenObj.transform);
+
+			}
 
 
 
@@ -214,11 +218,16 @@ namespace sge {
 			_renderRequest.clearFrameBuffers()->setColor({ 0, 0, 0.2f, 1 });
 
 			auto s = 1.0f;
+			float t = cos(Counter += 0.01);
 			//_material->setParam("test_float", s * 0.5f);
-			_material->setParam("test_color", Color4f(s, s, s, 1));
+			_material->setParam("test_color", Color4f(t, t, 1, 1));
 			//_testTerrain.render(_renderRequest);
-			_renderRequest.drawMash(SGE_LOC, _renderMesh, _material);
-
+			//_renderRequest.drawMash(SGE_LOC, _renderMesh, _material);
+			t = t * 0.01;
+			Vec3f pos{ t,0,0 };
+			_renderMesh2.UpdateMeshPosition(&pos);
+			_renderRequest.drawMash(SGE_LOC, _renderMesh2, _material);
+			
 
 			_renderRequest.swapBuffers();
 			_renderContext->commit(_renderRequest.commandBuffer);
@@ -240,12 +249,18 @@ namespace sge {
 		GameObject	childrenObj1;
 		GameObject	childrenObj2;
 
+		//EditMesh
+
 		//Renderer_DX11* renderer_dx11;
 		bool show_demo_window = true;
+		float Counter = 0;
 		SPtr<RenderContext> _renderContext;
 		RenderCommandBuffer _cmdBuf;
 		RenderMesh	_renderMesh;
+
 		RenderMesh	_renderMesh2;
+		EditMesh	editMesh2;
+
 		RenderMesh  _terrain;
 		GameObjectManager gameObjManager;
 		Terrain		_testTerrain;

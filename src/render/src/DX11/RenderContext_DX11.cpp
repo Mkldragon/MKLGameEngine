@@ -53,7 +53,7 @@ namespace sge
 	{
 		auto* ctx = _renderer->d3dDeviceContext();
 		if (_renderTargetView && cmd.color.has_value()) {
-			float color[] = { 0.0f, 0.2f, 0.4f, 1.0f };
+			float color[] = { 0.3f, 0.3f, 0.3f, 1.0f };
 			ctx->ClearRenderTargetView(_renderTargetView, cmd.color->data);
 		}
 		if (_depthStencilView && cmd.depth.has_value()) {

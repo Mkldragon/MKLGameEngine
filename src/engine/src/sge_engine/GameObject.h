@@ -72,6 +72,15 @@ namespace sge
 	};
 
 
+	class RendererC : public Component
+	{
+		SGE_TYPE(RendererC, Collider);
+	public:
+		RenderMesh* rendermesh;
+		Material* material;
+
+	};
+
 	class Rigidbody : public Component
 	{
 		SGE_TYPE(Rigidbody, Component);
