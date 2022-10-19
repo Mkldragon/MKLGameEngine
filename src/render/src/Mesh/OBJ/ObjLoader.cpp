@@ -210,6 +210,8 @@ namespace sge
 			}
 		}
 
+		_outMesh->O_pos = _outMesh->pos;
+
 		for (size_t i = 0; i < face_vi.size(); i++) {
 			if (i >= 3) {
 				_outMesh->index.emplace_back(static_cast<u32>(indicesStart + 0));

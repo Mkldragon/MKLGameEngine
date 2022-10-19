@@ -15,6 +15,7 @@ namespace sge {
 		Vector<u32> index;
 
 		Vector<Tuple3f> pos;
+		Vector<Tuple3f> O_pos;
 		Vector<Color4b> color;
 
 		Vector<Tuple2f>	uv[kUvCountMax];

@@ -7,6 +7,7 @@ namespace sge
 {
 	class GameObject;
 	class Component;
+	class Transform;
 
 	class Component : public Object
 	{
@@ -14,6 +15,7 @@ namespace sge
 	public:
 		Component() = default;
 		int componet1;
+		Transform* transform;
 		GameObject* gameObject;
 
 	};
@@ -74,9 +76,17 @@ namespace sge
 
 	class RendererC : public Component
 	{
-		SGE_TYPE(RendererC, Collider);
+		SGE_TYPE(RendererC, Component);
+		
 	public:
-		RenderMesh* rendermesh;
+		RenderMesh* renderMesh()
+		{
+			_rendermesh->UpdateMeshPosition(&transform->position);
+			return _rendermesh;
+		}
+
+		bool isCastShadow = false;
+		RenderMesh* _rendermesh;
 		Material* material;
 
 	};
@@ -106,6 +116,8 @@ namespace sge
 		void AddComponentToObj (Component* component) 
 		{
 			component->gameObject = this;
+			component->transform = transform;
+
 			this->_component.emplace_back(component);
 		}
 

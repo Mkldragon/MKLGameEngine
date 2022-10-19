@@ -66,7 +66,7 @@ namespace sge
 
 		_vertexLayout = VertexLayoutManager::instance()->getLayout(vertexType);
 
-		if (!_vertexLayout) {
+		if (!_vertexLayout) { 
 			throw SGE_ERROR("cannot find vertex Layout for mesh");
 		}
 
@@ -79,11 +79,16 @@ namespace sge
 	void RenderMesh::UpdateMeshPosition(Vec3f* position)
 	{
 		if (_editMesh == nullptr) return;
+
+		auto* o_pos = _editMesh->O_pos.begin();
+
 		for (auto& pos : _editMesh->pos)
 		{
-			pos.x += position->x;
-			pos.y += position->y;
-			pos.z += position->z;
+			pos.x = o_pos->x + position->x;
+			pos.y = o_pos->y + position->y;
+			pos.z = o_pos->z + position->z;
+
+			o_pos++;
 		}
 
 		for (auto& submesh : _subMeshes)
@@ -91,7 +96,7 @@ namespace sge
 			auto* pData = submesh.vertexData.data();
 			auto vc = submesh._vertexCount;
 
-			submesh.uploadToGPU();
+			submesh.uploadToGPU(); 
 		}
 	}
 

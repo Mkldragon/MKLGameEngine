@@ -155,7 +155,9 @@ namespace sge {
 				gameObjManager.AddToList(&childrenObj2); 
 				childrenObj2.name = "Childen3";
 				childrenObj2.transform->setParent(childrenObj.transform);
-
+				RendererC* rc = childrenObj2.AddComponent<RendererC>();
+				rc->_rendermesh = &_renderMesh2;
+				rc->material = _material;
 			}
 
 
@@ -218,16 +220,14 @@ namespace sge {
 			_renderRequest.clearFrameBuffers()->setColor({ 0, 0, 0.2f, 1 });
 
 			auto s = 1.0f;
-			float t = cos(Counter += 0.01);
+			//float t = cos(Counter += 0.01);
+			_material->setParam("test_color", Color4f(1, 1, 1, 1));
 			//_material->setParam("test_float", s * 0.5f);
-			_material->setParam("test_color", Color4f(t, t, 1, 1));
 			//_testTerrain.render(_renderRequest);
-			//_renderRequest.drawMash(SGE_LOC, _renderMesh, _material);
-			t = t * 0.01;
-			Vec3f pos{ t,0,0 };
-			_renderMesh2.UpdateMeshPosition(&pos);
-			_renderRequest.drawMash(SGE_LOC, _renderMesh2, _material);
 			
+			auto* rc = childrenObj2.GetComponent<RendererC>()->renderMesh();
+			//_renderRequest.drawMash(SGE_LOC, _renderMesh, _material);
+			_renderRequest.drawMash(SGE_LOC, *rc, _material);
 
 			_renderRequest.swapBuffers();
 			_renderContext->commit(_renderRequest.commandBuffer);
@@ -256,8 +256,8 @@ namespace sge {
 		float Counter = 0;
 		SPtr<RenderContext> _renderContext;
 		RenderCommandBuffer _cmdBuf;
-		RenderMesh	_renderMesh;
 
+		RenderMesh	_renderMesh;
 		RenderMesh	_renderMesh2;
 		EditMesh	editMesh2;
 
@@ -298,11 +298,7 @@ namespace sge {
 			winDesc.isMainWindow = true;
 			_mainWin.create(winDesc);
 			_mainWin.setWindowTitle("SGE Editor");
-
-
 		}
-
-
 
 	private:
 		MainWin		_mainWin;

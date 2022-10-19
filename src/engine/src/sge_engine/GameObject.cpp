@@ -92,9 +92,9 @@ namespace sge
 			{
 				static FieldInfo fi[] =
 				{
-					FieldInfo("childtest1", &This::position),
-					FieldInfo("childtest2", &This::rotation),
-					FieldInfo("childtest2", &This::localScale),
+					FieldInfo("position", &This::position),
+					FieldInfo("rotation", &This::rotation),
+					FieldInfo("localScale", &This::localScale),
 				};
 				setField(fi);
 			}
@@ -104,7 +104,24 @@ namespace sge
 		return &ti;
 	}
 
+	const TypeInfo* RendererC::s_getType()
+	{
+		class TI : public TI_Base
+		{
+		public:
+			TI()
+			{
+				static FieldInfo fi[] =
+				{
+					FieldInfo("componet1", &This::isCastShadow),
+				};
+				setField(fi);
+			}
+		};
 
+		static TI ti;
+		return &ti;
+	}
 
 
 	const TypeInfo* Rigidbody::s_getType()
