@@ -201,9 +201,9 @@ namespace sge {
 	template<class T, class DATA> SGE_INLINE
 		Mat4_Basic<T, DATA> Mat4_Basic<T, DATA>::s_scale(const Vec3& s) {
 		return Mat4({ s.x, 0,   0,   0 },
-			{ 0,   s.y, 0,   0 },
-			{ 0,   0,   s.z, 0 },
-			{ 0,   0,   0,   1 });
+					{ 0,   s.y, 0,   0 },
+					{ 0,   0,   s.z, 0 },
+					{ 0,   0,   0,   1 });
 	}
 
 

@@ -30,7 +30,7 @@ namespace sge
 		Transform* parent;
 		Vec3f position{ 0, 0, 0 };
 		Vec3f rotation{ 0, 0, 0 };
-		Vec3f localScale{ 0, 0, 0 };
+		Vec3f localScale{ 1, 1, 1 };
 
 
 		void setParent(Transform* p)
@@ -81,7 +81,7 @@ namespace sge
 	public:
 		RenderMesh* renderMesh()
 		{
-			_rendermesh->UpdateMeshPosition(&transform->position);
+			_rendermesh->UpdateMeshPosition(&transform->position, &transform->localScale);
 			return _rendermesh;
 		}
 

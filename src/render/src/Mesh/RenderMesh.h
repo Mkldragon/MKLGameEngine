@@ -59,7 +59,7 @@ namespace sge {
 		Span<const RenderSubMesh>	subMeshes() const	{ return _subMeshes; }
 		
 		void setSubMeshCount(size_t newSize);
-		void UpdateMeshPosition(Vec3f* pos);
+		void UpdateMeshPosition(Vec3f* pos, Vec3f* scale);
 
 	private:
 		RenderPrimitiveType			_primitive = RenderPrimitiveType::Triangles;

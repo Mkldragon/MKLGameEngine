@@ -76,17 +76,26 @@ namespace sge
 		
 	}
 
-	void RenderMesh::UpdateMeshPosition(Vec3f* position)
+	void RenderMesh::UpdateMeshPosition(Vec3f* position, Vec3f* scale)
 	{
 		if (_editMesh == nullptr) return;
 
 		auto* o_pos = _editMesh->O_pos.begin();
-
+		
 		for (auto& pos : _editMesh->pos)
 		{
-			pos.x = o_pos->x + position->x;
-			pos.y = o_pos->y + position->y;
-			pos.z = o_pos->z + position->z;
+			Vec3f _scale{ 0,0,0 };
+
+			_scale.x = o_pos->x * scale->x;
+			_scale.y = o_pos->y * scale->y;
+			_scale.z = o_pos->z * scale->z;
+
+			//Mat4f _rot{ _scale.x , _scale.y , _scale.z , 1 };
+
+
+			pos.x = _scale.x + position->x;
+			pos.y = _scale.y + position->y;
+			pos.z = _scale.z + position->z;
 
 			o_pos++;
 		}
