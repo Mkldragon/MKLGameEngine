@@ -2,6 +2,7 @@
 #pragma once
 #include "sge_core.h"
 #include "SgeImGui.h"
+#include "RenderQueue.h"
 
 namespace sge
 {
@@ -14,8 +15,7 @@ namespace sge
 		SGE_TYPE(Component, Object);
 	public:
 		Component() = default;
-		int componet1;
-		Transform* transform;
+		int instanceID;
 		GameObject* gameObject;
 
 	};
@@ -74,20 +74,39 @@ namespace sge
 	};
 
 
-	class RendererC : public Component
+	class CRenderer : public Component
 	{
-		SGE_TYPE(RendererC, Component);
+		SGE_TYPE(CRenderer, Component);
 		
 	public:
+		CRenderer()
+		{
+			queueObj.Init(_rendermesh, material);
+			RenderQueue* r = RenderQueue::instance();
+			r->RegisterRenderObject(&queueObj);
+
+			int a = 0;
+		}
+		~CRenderer()
+		{
+
+		}
+		void SetUp(RenderMesh* rendermesh, Material* mat)
+		{
+			_rendermesh = rendermesh;
+			material = mat;
+			queueObj.Init(_rendermesh, material);
+		}
+
 		RenderMesh* renderMesh()
 		{
-			_rendermesh->UpdateMeshPosition(&transform->position, &transform->localScale);
 			return _rendermesh;
 		}
 
+		RenderQueueObject queueObj;
 		bool isCastShadow = false;
-		RenderMesh* _rendermesh;
-		Material* material;
+		RenderMesh* _rendermesh = nullptr;
+		Material* material = nullptr;
 
 	};
 
@@ -116,8 +135,6 @@ namespace sge
 		void AddComponentToObj (Component* component) 
 		{
 			component->gameObject = this;
-			component->transform = transform;
-
 			this->_component.emplace_back(component);
 		}
 

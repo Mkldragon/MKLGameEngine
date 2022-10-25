@@ -2,7 +2,7 @@
 #include <sge_editor.h>
 #include "Mesh/OBJ/ObjLoader.h"
 #include "Mesh/OBJ/Terrain.h"
-#include <sge_engine/GameObject.h>
+#include <sge_engine.h>
 #include "GUI/HierarchyUI.h"
 #include "GUI/InspectorUI.h"
 
@@ -59,9 +59,7 @@ namespace sge {
 
 				_testTexture = renderer->createTexture2D(texDesc);
 				int a = 0;
-		}
-
-		
+			}
 
 			auto shader = renderer->createShader("Assets/Shaders/Standard.shader");
 		
@@ -70,15 +68,15 @@ namespace sge {
 
 			_material->setParam("mainTex", _testTexture);
 
-			//{
-			//	EditMesh editMesh;
-			//	ObjLoader::LoadFile(editMesh, "Assets/Mesh/test.obj");
+			{
+				
+				ObjLoader::LoadFile(editMesh, "Assets/Mesh/test.obj");
 
-			//	for (size_t i = editMesh.color.size(); i < editMesh.pos.size(); i++) {
-			//		editMesh.color.emplace_back(255, 255, 255, 255);
-			//	}
-			//	_renderMesh.create(editMesh);
-			//}
+				for (size_t i = editMesh.color.size(); i < editMesh.pos.size(); i++) {
+					editMesh.color.emplace_back(255, 255, 255, 255);
+				}
+				_renderMesh.create(&editMesh);
+			}
 
 
 			{
@@ -151,13 +149,14 @@ namespace sge {
 				gameObjManager.AddToList(&childrenObj1);
 				childrenObj1.name = "Childen2";
 				childrenObj1.transform->setParent(testObj.transform);
+				CRenderer* rc2 = childrenObj2.AddComponent<CRenderer>();
+				rc2->SetUp(&_renderMesh, _material);
 
 				gameObjManager.AddToList(&childrenObj2); 
 				childrenObj2.name = "Childen3";
 				childrenObj2.transform->setParent(childrenObj.transform);
-				RendererC* rc = childrenObj2.AddComponent<RendererC>();
-				rc->_rendermesh = &_renderMesh2;
-				rc->material = _material;
+				CRenderer* rc = childrenObj2.AddComponent<CRenderer>();
+				rc->SetUp(&_renderMesh2, _material);
 			}
 
 
@@ -220,14 +219,16 @@ namespace sge {
 			_renderRequest.clearFrameBuffers()->setColor({ 0, 0, 0.2f, 1 });
 
 			auto s = 1.0f;
-			//float t = cos(Counter += 0.01);
 			_material->setParam("test_color", Color4f(1, 1, 1, 1));
+			//float t = cos(Counter += 0.01);
 			//_material->setParam("test_float", s * 0.5f);
 			//_testTerrain.render(_renderRequest);
 			
-			auto* rc = childrenObj2.GetComponent<RendererC>()->renderMesh();
+			//_renderQueue->Render(&_renderRequest);
+			//auto* rc = childrenObj2.GetComponent<CRenderer>()->renderMesh();
+			_renderQueue.DrawMeshes(&_renderRequest);
 			//_renderRequest.drawMash(SGE_LOC, _renderMesh, _material);
-			_renderRequest.drawMash(SGE_LOC, *rc, _material);
+			//_renderRequest.drawMesh(SGE_LOC, *rc, _material);
 
 			_renderRequest.swapBuffers();
 			_renderContext->commit(_renderRequest.commandBuffer);
@@ -260,6 +261,7 @@ namespace sge {
 		RenderMesh	_renderMesh;
 		RenderMesh	_renderMesh2;
 		EditMesh	editMesh2;
+		EditMesh	editMesh;
 
 		RenderMesh  _terrain;
 		GameObjectManager gameObjManager;
@@ -268,7 +270,10 @@ namespace sge {
 
 		Math::Camera3f _camera;
 
+		
 		RenderRequest	_renderRequest;
+		RenderQueue		_renderQueue;
+
 		//Math	_camera;
 	};
 

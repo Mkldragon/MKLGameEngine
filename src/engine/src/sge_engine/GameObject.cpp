@@ -73,7 +73,7 @@ namespace sge
 			{
 				static FieldInfo fi[] =
 				{
-					FieldInfo("componet1", &This::componet1),
+					FieldInfo("instanceID", &This::instanceID),
 				};
 				setField(fi);
 			}
@@ -104,7 +104,7 @@ namespace sge
 		return &ti;
 	}
 
-	const TypeInfo* RendererC::s_getType()
+	const TypeInfo* CRenderer::s_getType()
 	{
 		class TI : public TI_Base
 		{

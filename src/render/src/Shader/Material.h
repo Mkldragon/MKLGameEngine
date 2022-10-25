@@ -140,8 +140,8 @@ namespace sge
 
 		MaterialPass*			_pass = nullptr;
 		ShaderStage*			_shaderStage = nullptr;
-		Vector<ConstBuffer, 4> _constBufs;
-		Vector<TexParam, 4>	_texParams;
+		Vector<ConstBuffer, 4>	_constBufs;
+		Vector<TexParam, 4>		_texParams;
 	};
 
 
@@ -213,14 +213,14 @@ namespace sge
 
 
 		void setParam(StrView name, Texture2D* v)		{ _setTexParam(name, v); }
-		void setParam(StrView name, const i32& v) { _setParam(name, v); }
-		void setParam(StrView name, const u32& v) { _setParam(name, v); }
+		void setParam(StrView name, const i32& v)		{ _setParam(name, v); }
+		void setParam(StrView name, const u32& v)		{ _setParam(name, v); }
 
 		void setParam(StrView name, const float& v)		{ _setParam(name, v); }
 
-		void setParam(StrView name, const Tuple2i& v) { _setParam(name, v); }
-		void setParam(StrView name, const Tuple3i& v) { _setParam(name, v); }
-		void setParam(StrView name, const Tuple4i& v) { _setParam(name, v); }
+		void setParam(StrView name, const Tuple2i& v)	{ _setParam(name, v); }
+		void setParam(StrView name, const Tuple3i& v)	{ _setParam(name, v); }
+		void setParam(StrView name, const Tuple4i& v)	{ _setParam(name, v); }
 
 		void setParam(StrView name, const Tuple2f& v)	{ _setParam(name, v); }
 		void setParam(StrView name, const Tuple3f& v)	{ _setParam(name, v); }

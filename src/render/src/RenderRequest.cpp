@@ -32,7 +32,7 @@ namespace sge
 		mat->setParam("sge_light_color", light_color);
 
 	}
-	void RenderRequest::drawMash(const SrcLoc& debugLoc, const RenderMesh& mesh, Material* material)
+	void RenderRequest::drawMesh(const SrcLoc& debugLoc, const RenderMesh& mesh, Material* material)
 	{
 		for (auto& sm : mesh.subMeshes()) {
 			drawSubMesh(debugLoc, sm, material);

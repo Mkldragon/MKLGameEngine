@@ -25,9 +25,8 @@ namespace sge
 
 		void setMaterialCommonParams(Material* mat);
 
-		void drawMash(const SrcLoc& debugLoc, const RenderMesh& mesh, Material* material);
+		void drawMesh(const SrcLoc& debugLoc, const RenderMesh& mesh, Material* material);
 		void drawSubMesh(const SrcLoc& debugLoc, const RenderSubMesh& subMesh, Material* mat);
-
 
 		RenderCommand_ClearFrameBuffers* clearFrameBuffers() {
 			return commandBuffer.newCommand<RenderCommand_ClearFrameBuffers>();
