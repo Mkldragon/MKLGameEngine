@@ -17,7 +17,7 @@ namespace sge
 	{
 		if (!mat) return;
 
-		mat->setParam("sge_matrix_model", matrix_model);
+		//mat->setParam("sge_matrix_model", matrix_model);
 		mat->setParam("sge_matrix_view", matrix_view);
 		mat->setParam("sge_matrix_proj", matrix_proj);
 

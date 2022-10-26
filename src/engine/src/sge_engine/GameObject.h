@@ -20,8 +20,6 @@ namespace sge
 
 	};
 
-
-
 	class Transform : public Component
 	{
 		SGE_TYPE(Transform, Component);
@@ -33,14 +31,18 @@ namespace sge
 		Vec3f localScale{ 1, 1, 1 };
 
 
+		const Mat4f PosMatrix() {
+			return Mat4f::s_translate(position);
+		}
+
 		void setParent(Transform* p)
 		{
 			parent = p;
 			p->AddChildren(this);
 		};
 
-		Transform* getChild(int index) 
-		{ 
+		Transform* getChild(int index)
+		{
 			if (index >= _children.size()) return  nullptr;
 			else return _children[index];
 		};
@@ -54,74 +56,9 @@ namespace sge
 	private:
 		Vector<Transform*, 64> _children;
 		bool isDirty;
-	};
 
-	class Collider : public Component
-	{
-		SGE_TYPE(Collider, Component);
-	public:
-		bool isTrigger = false;
 
 	};
-
-	class BoxCollider : public Collider
-	{
-		SGE_TYPE(BoxCollider, Collider);
-	public:
-		Vec3f center{ 0, 0, 0 };
-		Vec3f size{ 0,0,0 };
-
-	};
-
-
-	class CRenderer : public Component
-	{
-		SGE_TYPE(CRenderer, Component);
-		
-	public:
-		CRenderer()
-		{
-			queueObj.Init(_rendermesh, material);
-			RenderQueue* r = RenderQueue::instance();
-			r->RegisterRenderObject(&queueObj);
-
-			int a = 0;
-		}
-		~CRenderer()
-		{
-
-		}
-		void SetUp(RenderMesh* rendermesh, Material* mat)
-		{
-			_rendermesh = rendermesh;
-			material = mat;
-			queueObj.Init(_rendermesh, material);
-		}
-
-		RenderMesh* renderMesh()
-		{
-			return _rendermesh;
-		}
-
-		RenderQueueObject queueObj;
-		bool isCastShadow = false;
-		RenderMesh* _rendermesh = nullptr;
-		Material* material = nullptr;
-
-	};
-
-	class Rigidbody : public Component
-	{
-		SGE_TYPE(Rigidbody, Component);
-	public:
-
-		Vec3f	child2test1{ 0,1,1 };
-		int		child2test2 = 0;
-		float	test4 = 10;
-	};
-
-
-
 
 	class GameObject : public Object
 	{
@@ -132,7 +69,7 @@ namespace sge
 		float		Objtest1 = 0;
 		int			Objtest2 = 0;
 
-		void AddComponentToObj (Component* component) 
+		void AddComponentToObj(Component* component)
 		{
 			component->gameObject = this;
 			this->_component.emplace_back(component);
@@ -161,9 +98,90 @@ namespace sge
 		Transform* transform;
 		Vector<SPtr<Component>, 32> _component;
 
-		
+
 	private:
 	};
+
+
+	class Collider : public Component
+	{
+		SGE_TYPE(Collider, Component);
+	public:
+		bool isTrigger = false;
+
+	};
+
+	class BoxCollider : public Collider
+	{
+		SGE_TYPE(BoxCollider, Collider);
+	public:
+		Vec3f center{ 0, 0, 0 };
+		Vec3f size{ 0,0,0 };
+
+	};
+
+
+	class CRenderer : public Component
+	{
+		SGE_TYPE(CRenderer, Component);
+		
+	public:
+
+		CRenderer()
+		{
+			queueObj.Init(_rendermesh, material);
+			RenderQueue* r = RenderQueue::instance();
+			r->RegisterRenderObject(&queueObj);
+
+			int a = 0;
+		}
+		~CRenderer()
+		{
+
+		}
+		void SetUp(RenderMesh* rendermesh, Material* mat)
+		{
+			_rendermesh = rendermesh;
+			material = mat;
+			queueObj.Init(_rendermesh, material);
+		}
+
+		RenderMesh* renderMesh()
+		{
+			GameObject* obj = Base::gameObject;
+			Transform* trans = obj->transform;
+
+			if (material != nullptr && obj != nullptr)
+			{
+				Mat4f posMatrix = trans->PosMatrix();
+				material->setParam("sge_matrix_model", posMatrix);
+
+			}
+			return _rendermesh;
+		}
+
+
+		RenderQueueObject queueObj;
+		bool isCastShadow = false;
+		RenderMesh* _rendermesh = nullptr;
+		Material* material = nullptr;
+
+	};
+
+	class Rigidbody : public Component
+	{
+		SGE_TYPE(Rigidbody, Component);
+	public:
+
+		Vec3f	child2test1{ 0,1,1 };
+		int		child2test2 = 0;
+		float	test4 = 10;
+	};
+
+
+
+
+
 
 
 
