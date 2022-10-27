@@ -23,10 +23,20 @@ namespace sge
 		for (size_t i = 0; i < _renderObjs.size(); i++)
 		{
 			RenderQueueObject* obj = _renderObjs[i].ptr();
-			if (obj->GetMaterial() == nullptr || obj->GetMaterial() == nullptr) return;
 
-			req->drawMesh(SGE_LOC,  *obj->GetRenderMesh(), obj->GetMaterial());
+			if (obj->_renderComponent == nullptr) return;
+			if (obj->_renderComponent->_rendermesh == nullptr ||
+				obj->_renderComponent->material == nullptr) 
+				return;
+
+
+			req->matrix_model = obj->_renderComponent->getTransMatrix();
+
+
+			req->drawMesh(SGE_LOC, *obj->_renderComponent->_rendermesh, obj->_renderComponent->material);
 		}
+
+
 	}
 
 
@@ -35,10 +45,11 @@ namespace sge
 		int a = 0;
 		_renderObjs.emplace_back(obj);
 	}
-	void RenderQueueObject::Init(RenderMesh* mesh, Material* mat)
+	void RenderQueueObject::Init(CRenderer* _rc)
 	{
-		_mesh = mesh;
-		_mat = mat;
+		_renderComponent = _rc;
+		_mesh = _renderComponent->_rendermesh;
+		_mat = _renderComponent->material;
 	}
 	//RenderQueueObject::RenderQueueObject(RenderMesh* mesh, Material* mat)
 	//{

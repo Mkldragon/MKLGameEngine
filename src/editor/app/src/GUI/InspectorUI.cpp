@@ -63,10 +63,14 @@ namespace sge
 
 				if (transform)
 					TranformGUI(transform);
-				
-
 				else if (boxCollider)
 					BoxColliderGUI(boxCollider);
+				else
+				{
+					ImGui::Separator();
+					ImGui::Text(h->name);
+					ImGui::Separator();
+				}
 
 			}
 

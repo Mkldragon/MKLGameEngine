@@ -6,9 +6,12 @@
 
 namespace sge
 {
+
+	class RenderQueueObject;
 	class GameObject;
 	class Component;
 	class Transform;
+
 
 	class Component : public Object
 	{
@@ -121,31 +124,31 @@ namespace sge
 	};
 
 
+
 	class CRenderer : public Component
 	{
 		SGE_TYPE(CRenderer, Component);
 		
 	public:
 
-		CRenderer()
-		{
-			queueObj.Init(_rendermesh, material);
-			RenderQueue* r = RenderQueue::instance();
-			r->RegisterRenderObject(&queueObj);
+		CRenderer() { QueueRegister(); }
+		~CRenderer() { }
 
-			int a = 0;
-		}
-		~CRenderer()
-		{
+		void QueueRegister();
 
-		}
-		void SetUp(RenderMesh* rendermesh, Material* mat)
-		{
-			_rendermesh = rendermesh;
-			material = mat;
-			queueObj.Init(_rendermesh, material);
-		}
+		void SetUp(RenderMesh* rendermesh, Material* mat);
 
+
+		Mat4f getTransMatrix()
+		{
+			Mat4f objTransMat = Mat4f::s_identity();
+			Transform* trans = Base::gameObject->transform;
+			objTransMat = Mat4f::s_scale(trans->localScale);
+			objTransMat = objTransMat * Mat4f::s_rotate(trans->rotation);
+			objTransMat = objTransMat * Mat4f::s_translate(trans->position);
+
+			return objTransMat;
+		}
 		RenderMesh* renderMesh()
 		{
 			GameObject* obj = Base::gameObject;
@@ -160,8 +163,7 @@ namespace sge
 			return _rendermesh;
 		}
 
-
-		RenderQueueObject queueObj;
+		RenderQueueObject* queueObj;
 		bool isCastShadow = false;
 		RenderMesh* _rendermesh = nullptr;
 		Material* material = nullptr;

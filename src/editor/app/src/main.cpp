@@ -149,7 +149,7 @@ namespace sge {
 				gameObjManager.AddToList(&childrenObj1);
 				childrenObj1.name = "Childen2";
 				childrenObj1.transform->setParent(testObj.transform);
-				CRenderer* rc2 = childrenObj2.AddComponent<CRenderer>();
+				CRenderer* rc2 = childrenObj1.AddComponent<CRenderer>();
 				rc2->SetUp(&_renderMesh, _material);
 
 				gameObjManager.AddToList(&childrenObj2); 
@@ -211,7 +211,6 @@ namespace sge {
 			_renderContext->endRender();
 
 			_renderRequest.reset();
-			_renderRequest.matrix_model = Mat4f::s_identity();
 			_renderRequest.matrix_view	= _camera.viewMatrix();
 			_renderRequest.matrix_proj	= _camera.projMatrix();
 			_renderRequest.camera_pos	= _camera.pos();

@@ -2,20 +2,22 @@
 #include "sge_core.h"
 #include "RenderRequest.h"
 #include "RenderCommand.h"
-
+#include "GameObject.h"
 namespace sge
 {
+	class CRenderer;
 
 	class RenderQueueObject : public RefCountBase
 	{
 	public:
 		RenderQueueObject() = default;
-		void Init(RenderMesh* mesh, Material* mat);
+		void Init(CRenderer* _rc);
 
 		RenderMesh* GetRenderMesh() { return _mesh; }
 		Material* GetMaterial() { return _mat; }
-
+		CRenderer* _renderComponent;
 	private:
+		
 		RenderMesh* _mesh = nullptr;
 		Material* _mat = nullptr;
 		RenderQueueObject(const RenderQueueObject&) = delete;

@@ -123,6 +123,21 @@ namespace sge
 		return &ti;
 	}
 
+	void CRenderer::QueueRegister()
+	{
+		queueObj = new RenderQueueObject();
+		queueObj->Init(this);
+		RenderQueue* r = RenderQueue::instance();
+		r->RegisterRenderObject(queueObj);
+
+		int a = 0;
+	}
+
+	void CRenderer::SetUp(RenderMesh* rendermesh, Material* mat)
+	{
+		_rendermesh = rendermesh;
+		material = mat;
+	}
 
 	const TypeInfo* Rigidbody::s_getType()
 	{
