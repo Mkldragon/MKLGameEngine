@@ -2,6 +2,7 @@
 
 #include "Vec4.h"
 #include "Rect2.h"
+#include "Quat4.h"
 
 namespace sge {
 
@@ -53,6 +54,7 @@ namespace sge {
 		static SGE_INLINE		Mat4	s_shear(const Vec3& v);
 
 		static SGE_INLINE		Mat4	s_TRS(const Vec3& translate, const Vec3& rotate, const Vec3& scale);
+		static SGE_INLINE		Mat4	s_TRS(const Vec3& translate, const Quat4& rotate, const Vec3& scale);
 		static SGE_INLINE		Mat4	s_TS(const Vec3& translate, const Vec3& scale);
 
 		static SGE_INLINE		Mat4	s_perspective(T fovy_rad, T aspect, T zNear, T zFar);
@@ -215,6 +217,10 @@ namespace sge {
 			{ 0,   0,  0,  1 });
 	}
 
+
+
+
+
 	template<class T, class DATA> SGE_INLINE
 		Mat4_Basic<T, DATA> Mat4_Basic<T, DATA>::s_TRS(const Vec3& translate, const Vec3& rotate, const Vec3& scale) {
 		Vec3 s, c;
@@ -223,10 +229,10 @@ namespace sge {
 		Math::sincos(rotate.z, s.z, c.z);
 
 		return Mat4(
-			{ scale.x * (c.y * c.z),				scale.x * (c.y * s.z),				scale.x * (-s.y),		0 },
+			{ scale.x * (c.y * c.z),					scale.x * (c.y * s.z),						scale.x * (-s.y),		0 },
 			{ scale.y * (s.x * s.y * c.z - c.x * s.z),	scale.y * (c.x * c.z + s.x * s.y * s.z),	scale.y * (s.x * c.y),	0 },
 			{ scale.z * (s.x * s.z + c.x * s.y * c.z),	scale.z * (c.x * s.y * s.z - s.x * c.z),	scale.z * (c.x * c.y),	0 },
-			{ translate.x,						translate.y,						translate.z,			1 });
+			{ translate.x,								translate.y,								translate.z,			1 });
 	}
 
 	template<class T, class DATA> SGE_INLINE

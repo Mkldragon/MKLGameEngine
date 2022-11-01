@@ -29,9 +29,22 @@ namespace sge
 	public:
 
 		Transform* parent;
+
+
 		Vec3f position{ 0, 0, 0 };
 		Vec3f rotation{ 0, 0, 0 };
 		Vec3f localScale{ 1, 1, 1 };
+
+
+		void setLocalPos(float x, float y, float z) { setLocalPos(Vec3f(x, y, z)); }
+		void setLocalPos(const Vec3f& v)			{ _localPos = v;		_setLocalMatrixDirty(); }
+		void setLocalRotate(const Quat4f& v)		{ _localRotate = v;		_setLocalMatrixDirty(); }
+		void setLocalScale(const Vec3f& v)			{ _localScale = v;		_setLocalMatrixDirty(); }
+
+
+		const Vec3f& localPos()		const { return _localPos; }
+		const Quat4f& localRotate() const { return _localRotate; }
+		const Vec3f& localScale()	const { return _localScale; }
 
 
 		const Mat4f PosMatrix() {
@@ -54,14 +67,66 @@ namespace sge
 		{
 			_children.emplace_back(child);
 		};
-		int getChildCount() { return _children.size(); };
+		size_t getChildCount() const { return _children.size(); };
+
+		const Mat4f& localMatrix();
+		const Mat4f& worldMatrix();
+
 
 	private:
-		Vector<Transform*, 64> _children;
-		bool isDirty;
+		void _computeLocalMatrix();
+		void _computeWorldMatrix();
 
+		void _setLocalMatrixDirty();
+		void _setWorldMatrixDirty();
+
+		Vec3f	_localPos	{ 0,0,0 };
+		Quat4f	_localRotate{ 0,0,0,0 };
+		Vec3f	_localScale	{ 1,1,1 };
+
+
+		Vector<Transform*, 64> _children;
+
+		struct Dirty {
+			Dirty()
+				: localMatrix(true)
+				, worldMatrix(true)
+			{}
+			bool	localMatrix : 1;
+			bool	worldMatrix : 1;
+		};
+
+		Dirty		_dirty;
+		Mat4f	_localMatrix;
+		Mat4f	_worldMatrix;
 
 	};
+	inline
+		void Transform::_setLocalMatrixDirty() {
+		if (_dirty.localMatrix) return;
+		_dirty.localMatrix = true;
+		_setWorldMatrixDirty();
+	}
+
+	inline
+		const Mat4f& Transform::localMatrix() {
+		if (_dirty.localMatrix) {
+			_dirty.localMatrix = false;
+			_computeLocalMatrix();
+		}
+		return _localMatrix;
+	}
+
+	inline
+		const Mat4f& Transform::worldMatrix() {
+		if (_dirty.worldMatrix) {
+			_dirty.worldMatrix = false;
+			_computeWorldMatrix();
+		}
+		return _worldMatrix;
+	}
+
+
 
 	class GameObject : public Object
 	{
@@ -143,9 +208,10 @@ namespace sge
 		{
 			Mat4f objTransMat = Mat4f::s_identity();
 			Transform* trans = Base::gameObject->transform;
-			objTransMat = Mat4f::s_scale(trans->localScale);
+
 			objTransMat = objTransMat * Mat4f::s_rotate(trans->rotation);
 			objTransMat = objTransMat * Mat4f::s_translate(trans->position);
+			objTransMat = objTransMat * Mat4f::s_scale(trans->localScale);
 
 			return objTransMat;
 		}
@@ -166,7 +232,7 @@ namespace sge
 		RenderQueueObject* queueObj;
 		bool isCastShadow = false;
 		RenderMesh* _rendermesh = nullptr;
-		Material* material = nullptr;
+		SPtr<Material> material = nullptr;
 
 	};
 

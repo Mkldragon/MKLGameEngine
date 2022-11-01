@@ -104,6 +104,29 @@ namespace sge
 		return &ti;
 	}
 
+	void Transform::_computeLocalMatrix() {
+		_localMatrix = Mat4f::s_TRS(_localPos, _localRotate, _localScale);
+	}
+
+	void Transform::_computeWorldMatrix() {
+		if (parent) {
+			_worldMatrix = parent->worldMatrix() * localMatrix();
+		}
+		else {
+			_worldMatrix = localMatrix();
+		}
+	}
+
+	void Transform::_setWorldMatrixDirty() {
+		if (_dirty.worldMatrix) return;
+		_dirty.worldMatrix = true;
+		for (auto* c : _children) {
+			if (!c) continue;
+			c->_setWorldMatrixDirty();
+		}
+	}
+
+
 	const TypeInfo* CRenderer::s_getType()
 	{
 		class TI : public TI_Base

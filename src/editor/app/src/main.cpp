@@ -64,8 +64,8 @@ namespace sge {
 			auto shader = renderer->createShader("Assets/Shaders/Standard.shader");
 		
 			_material = renderer->createMaterial();
-			_material->setShader(shader);
 
+			_material->setShader(shader);
 			_material->setParam("mainTex", _testTexture);
 
 			{
@@ -103,36 +103,6 @@ namespace sge {
 
 			}
 
-	#pragma region useless
-			//EditMesh _terrainEM;
-
-			//int xSize = 1;
-			//int zSize = 1;
-
-
-			//_terrainEM.pos.emplace_back(-0.388876, -0.388876, 0);
-			//_terrainEM.pos.emplace_back(0.388876, 0.388876, 0);
-			//_terrainEM.pos.emplace_back(0.388876, -0.388876, 0);
-
-			//_terrainEM.color.emplace_back(255, 255, 255, 255);
-			//_terrainEM.color.emplace_back(255, 255, 255, 255);
-			//_terrainEM.color.emplace_back(255, 255, 255, 255);
-
-			//_terrainEM.uv[0].emplace_back(1, 0);
-			//_terrainEM.uv[0].emplace_back(0, 1);
-			//_terrainEM.uv[0].emplace_back(0, 0);
-
-			//_terrainEM.normal.emplace_back(0.0f, 0.0f, 1.0f);
-			//_terrainEM.normal.emplace_back(0.0f, 0.0f, 1.0f);
-			//_terrainEM.normal.emplace_back(0.0f, 0.0f, 1.0f);
-			//t = new Terrain(1, 1);
-			// 
-			//_testTerrain.CreateEditMesh(8, 8);
-			//_terrain.create(*_testTerrain.getTerrainMesh());
-
-
-	#pragma endregion
-
 
 			{//Game Object Test
 				gameObjManager.AddToList(&testObj);
@@ -150,13 +120,21 @@ namespace sge {
 				childrenObj1.name = "Childen2";
 				childrenObj1.transform->setParent(testObj.transform);
 				CRenderer* rc2 = childrenObj1.AddComponent<CRenderer>();
-				rc2->SetUp(&_renderMesh, _material);
+				rc2->SetUp(&_renderMesh, renderer->createMaterial());
+				rc2->material->setShader(shader);
+				rc2->material->setParam("mainTex", _testTexture);
+				rc2->material->setParam("test_color", Color4f(1, 1, 1, 1));
+
+
 
 				gameObjManager.AddToList(&childrenObj2); 
 				childrenObj2.name = "Childen3";
 				childrenObj2.transform->setParent(childrenObj.transform);
 				CRenderer* rc = childrenObj2.AddComponent<CRenderer>();
-				rc->SetUp(&_renderMesh2, _material);
+				rc->SetUp(&_renderMesh2, renderer->createMaterial());
+				rc->material->setShader(shader);
+				rc->material->setParam("mainTex", _testTexture);
+				rc->material->setParam("test_color", Color4f(1, 1, 1, 1));
 			}
 
 
